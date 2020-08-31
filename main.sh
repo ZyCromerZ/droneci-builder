@@ -113,8 +113,8 @@ tg_send_files(){
 	-F chat_id="$SaveChatID"  \
 	-F "disable_web_page_preview=true" \
 	-F "parse_mode=html" \
-	-F caption="✅ <b>Build Success : $((DIFF / 60)):$((DIFF % 60)) </b>%0A<b>MD5 Checksum : </b><code>$MD5CHECK</code>Zip Name : <code>$ZipName</code>"
-    tg_send_info "✅ <b>Build Success : $((DIFF / 60)):$((DIFF % 60)) </b>%0A<b>MD5 Checksum : </b><code>$MD5CHECK</code>Zip Name : <code>$ZipName</code>"
+	-F caption="✅ <b>Build Success : $((DIFF / 60)):$((DIFF % 60)) </b> %0A<b>MD5 Checksum : </b><code>$MD5CHECK</code>%0AZip Name : <code>$ZipName</code>"
+    tg_send_info "✅ <b>Build Success : $((DIFF / 60)):$((DIFF % 60)) </b> %0A<b>MD5 Checksum : </b><code>$MD5CHECK</code>%0AZip Name : <code>$ZipName</code>"
     # remove files after build done
     rm -rf $(pwd)/$ZipName
 }
@@ -170,9 +170,9 @@ CompileKernel(){
         cp -af $kernelDir/out/arch/$ARCH/boot/Image.gz-dtb $AnykernelDir
         KName=$(cat "$(pwd)/arch/arm64/configs/begonia_user_defconfig" | grep "CONFIG_LOCALVERSION=" | sed 's/CONFIG_LOCALVERSION="-*//g' | sed 's/"*//g' )
         if [ $TypeBuild == "Stable" ];then
-            ZipName="[$TypeBuildTag][$CODENAME]$KVer-$KName-$HeadCommitId.zip"
+            ZipName="[$GetBD][$TypeBuildTag][$CODENAME]$KVer-$KName-$HeadCommitId.zip"
         else
-            ZipName="[$TypeBuildTag][$TypeBuild][$CODENAME]$KVer-$KName-$HeadCommitId.zip"
+            ZipName="[$GetBD][$TypeBuildTag][$TypeBuild][$CODENAME]$KVer-$KName-$HeadCommitId.zip"
         fi
         MakeZip
     else
