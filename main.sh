@@ -95,12 +95,12 @@ fi
 
 tg_send_info(){
     if [ ! -z "$2" ];then
-        curl -X POST "https://api.telegram.org/bot$BOT_TOKEN/sendMessage" -d chat_id="-1001150624898" \
+        curl -X POST "https://api.telegram.org/bot$BOT_TOKEN/sendMessage" -d chat_id="$2" \
         -d "disable_web_page_preview=true" \
         -d "parse_mode=html" \
         -d text="$1"
     else
-        curl -X POST "https://api.telegram.org/bot$BOT_TOKEN/sendDocument" -d chat_id="$2" \
+        curl -X POST "https://api.telegram.org/bot$BOT_TOKEN/sendMessage" -d chat_id="-1001150624898" \
         -d "disable_web_page_preview=true" \
         -d "parse_mode=html" \
         -d text="$1"
@@ -123,8 +123,8 @@ CompileKernel(){
     tg_send_info "<b>🔨 New Kernel On The Way</b>%0A<b>Branch: $branch</b>%0A<b>Host Core Count : $TotalCores cores </b>%0A<b>Kernel Version: $KVer</b>%0A<b>Commit-Id: $HeadCommitId </b>%0A<b>Commit-Message: $HeadCommitMsg </b>%0A<b>Build Date: $GetCBD </b>%0A<b>Builder Info: </b>%0A<code>-----</code>%0A<code>- $ClangType </code>%0A<code>- $gcc64Type </code>%0A<code>- $gcc32Type </code>%0A#$TypeBuildTag #$TypeBuild"
     make -j${TotalCores}  O=out ARCH="$ARCH" "$DEFFCONFIG"
     make -j${TotalCores}  O=out \
-        PATH=$CLANG_DIR/bin:$GCC64_DIR/bin/:$GCC32_DIR/bin/:/usr/bin:${PATH} \
-        LD_LIBRARY_PATH="$CLANG_DIR/lib64:${LD_LIBRARY_PATH}" \
+        PATH=$clangDir/bin:$gcc64Dir/bin/:$gcc32Dir/bin/:/usr/bin:${PATH} \
+        LD_LIBRARY_PATH="$clangDir/lib64:${LD_LIBRARY_PATH}" \
         CC=clang \
         CROSS_COMPILE=aarch64-linux-android- \
         CROSS_COMPILE_ARM32=arm-linux-androideabi- \
