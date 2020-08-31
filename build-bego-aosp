@@ -16,13 +16,13 @@ function make_changes() {
     git checkout $1 && update_file 'main.sh' "$1.sh" './.drone.yml'
 }
 
-for Files in bego-memeui-private bego-memeui-qk-n bego-memeui-qk-l bego-memeui-tercydux bego-memeui-tercydux-oc
+for Files in bego-aosp-private bego-aosp-qk-n bego-aosp-qk-l bego-aosp-tercydux bego-aosp-tercydux-oc
 do
     git branch -D $Files
     make_changes $Files
 done
 
 git push -f origin \
-bego-memeui-private bego-memeui-qk-n bego-memeui-qk-l bego-memeui-tercydux bego-memeui-tercydux-oc
+bego-aosp-private bego-aosp-qk-n bego-aosp-qk-l bego-aosp-tercydux bego-aosp-tercydux-oc
 
 git checkout master
