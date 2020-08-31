@@ -118,11 +118,33 @@ tg_send_files(){
 
 CompileKernel(){
     cd $kernelDir
+    MAKE+=(
+            ARCH=$ARCH \
+            SUBARCH=$ARCH \
+            PATH=$clangDir/bin:$gcc64Dir/bin/:$gcc32Dir/bin/:/usr/bin:${PATH} \
+            LD_LIBRARY_PATH="$clangDir/lib64:${LD_LIBRARY_PATH}" \
+            CC=clang \
+            CROSS_COMPILE=aarch64-linux-android- \
+            CROSS_COMPILE_ARM32=arm-linux-androideabi- \
+            AS=llvm-as \
+            NM=llvm-nm \
+            OBJDUMP=llvm-objdump \
+            OBJSIZE=llvm-size \
+            READELF=llvm-readelf \
+            STRIP=llvm-strip \
+            HOSTCC=clang \
+            HOSTCXX=clang++ \
+            HOSTLD=ld.lld \
+            LD=ld.lld \
+            CLANG_TRIPLE=aarch64-linux-gnu-
+    )
     rm -rf out # always remove out directory :V
     BUILD_START=$(date +"%s")
     tg_send_info "<b>🔨 New Kernel On The Way</b>%0A<b>Branch: $branch</b>%0A<b>Host Core Count : $TotalCores cores </b>%0A<b>Kernel Version: $KVer</b>%0A<b>Commit-Id: $HeadCommitId </b>%0A<b>Commit-Message: $HeadCommitMsg </b>%0A<b>Build Date: $GetCBD </b>%0A<b>Builder Info: </b>%0A<code>-----</code>%0A<code>- $ClangType </code>%0A<code>- $gcc64Type </code>%0A<code>- $gcc32Type </code>%0A#$TypeBuildTag #$TypeBuild"
     make -j${TotalCores}  O=out ARCH="$ARCH" "$DEFFCONFIG"
     make -j${TotalCores}  O=out \
+        ARCH=$ARCH \
+        SUBARCH=$ARCH \
         PATH=$clangDir/bin:$gcc64Dir/bin/:$gcc32Dir/bin/:/usr/bin:${PATH} \
         LD_LIBRARY_PATH="$clangDir/lib64:${LD_LIBRARY_PATH}" \
         CC=clang \
