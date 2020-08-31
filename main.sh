@@ -110,7 +110,15 @@ tg_send_info(){
 
 tg_send_files(){
 	MD5CHECK=$(md5sum "$(pwd)/$ZipName" | cut -d' ' -f1)
-    MSG="✅ <b>Build Success</b> %0A- <code>$((DIFF / 60)) minute(s) $((DIFF % 60)) second(s) </code> %0A%0A<b>MD5 Checksum</b>%0A- <code>$MD5CHECK</code>%0A%0A<b>Zip Name</b> %0A- <code>$ZipName</code>"
+    MSG="✅ <b>Build Success</b> 
+- <code>$((DIFF / 60)) minute(s) $((DIFF % 60)) second(s) </code> 
+
+<b>MD5 Checksum</b>
+- <code>$MD5CHECK</code>
+
+<b>Zip Name</b> 
+- <code>$ZipName</code>"
+
 	curl --progress-bar -F document=@"$(pwd)/$ZipName" "https://api.telegram.org/bot$BOT_TOKEN/sendDocument" \
 	-F chat_id="$SaveChatID"  \
 	-F "disable_web_page_preview=true" \
