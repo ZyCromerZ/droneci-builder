@@ -6,7 +6,7 @@ name: ZyCPipeline
 steps: 
   - 
     commands: 
-      - ". main.sh"
+      - "bash ./main.sh"
     environment: 
       BOT_TOKEN: 
         from_secret: BOT_API_KEY

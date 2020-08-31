@@ -1,0 +1,28 @@
+#! /bin/bash
+
+function update_file() {
+    if [ ! -z "$1" ] && [ ! -z "$2" ] && [ ! -z "$3" ];then
+        GetValue="$(cat "$3" | grep "$1")"
+        GetPath=${3/"./"/"/"}
+        [ "$GetValue" != "$2" ] && \
+        sed -i "s/$1.*/$2"'"'"/g" "$3"
+        [ ! -z "$(git status | grep "modified" )" ] && \
+        git add "$3" && \
+        git commit -m "update builder $2"
+    fi
+}
+function make_changes() {
+    git checkout master && git checkout -b $1 && \
+    git checkout $1 && update_file 'main.sh' "$1.sh" './.drone.yml'
+}
+
+for Files in bego-memeui-private
+do
+    git branch -D $Files
+    make_changes $Files
+done
+
+git push -f origin \
+bego-memeui-private
+
+git checkout master
