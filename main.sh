@@ -71,6 +71,7 @@ if [ ! -z "$1" ] && [ "$1" == 'initial' ];then
     TypeBuildTag="AOSP-CFW"
     export KBUILD_BUILD_USER="ZyCromerZ"
     export KBUILD_BUILD_HOST="DroneCI-server"
+    export KBUILD_BUILD_VERSION=$DRONE_BUILD_NUMBER
     ClangType="$($clangDir/bin/clang --version | head -n 1)"
     if [ -e $gcc64Dir/bin/aarch64-linux-android-gcc ];then
         gcc64Type="$($gcc64Dir/bin/aarch64-linux-android-gcc --version | head -n 1)"
@@ -109,12 +110,18 @@ tg_send_info(){
 
 tg_send_files(){
 	MD5CHECK=$(md5sum "$(pwd)/$ZipName" | cut -d' ' -f1)
+    MSG="✅ <b>Build Success</b> %0A- <code>$((DIFF / 60)) minute(s) $((DIFF % 60)) second(s) </code> %0A%0A<b>MD5 Checksum</b>%0A- <code>$MD5CHECK</code>%0A%0A<b>Zip Name</b> %0A- <code>$ZipName</code>"
 	curl --progress-bar -F document=@"$(pwd)/$ZipName" "https://api.telegram.org/bot$BOT_TOKEN/sendDocument" \
 	-F chat_id="$SaveChatID"  \
 	-F "disable_web_page_preview=true" \
 	-F "parse_mode=html" \
-	-F caption="✅ <b>Build Success : $((DIFF / 60)):$((DIFF % 60)) </b> %0A<b>MD5 Checksum : </b><code>$MD5CHECK</code>%0AZip Name : <code>$ZipName</code>"
-    tg_send_info "✅ <b>Build Success : $((DIFF / 60)):$((DIFF % 60)) </b> %0A<b>MD5 Checksum : </b><code>$MD5CHECK</code>%0AZip Name : <code>$ZipName</code>"
+	-F caption="$MSG"
+    
+    if [ ! -z "$1" ];then
+        tg_send_info "$MSG" "$1"
+    else
+        tg_send_info "$MSG"
+    fi
     # remove files after build done
     rm -rf $(pwd)/$ZipName
 }
@@ -143,7 +150,12 @@ CompileKernel(){
     )
     rm -rf out # always remove out directory :V
     BUILD_START=$(date +"%s")
-    tg_send_info "<b>🔨 New Kernel On The Way</b>%0A<b>Branch: $branch</b>%0A<b>Host Core Count : $TotalCores cores </b>%0A<b>Kernel Version: $KVer</b>%0A<b>Commit-Id: $HeadCommitId </b>%0A<b>Commit-Message: $HeadCommitMsg </b>%0A<b>Build Date: $GetCBD </b>%0A<b>Builder Info: </b>%0A<code>-----</code>%0A<code>- $ClangType </code>%0A<code>- $gcc64Type </code>%0A<code>- $gcc32Type </code>%0A#$TypeBuildTag #$TypeBuild"
+    MSG="<b>🔨 New Kernel On The Way</b>%0A<b>Branch: $branch</b>%0A<b>Build Date: $GetCBD </b>%0A<b>Build Number: $DRONE_BUILD_NUMBER </b>%0A<b>Build Link Progress:</b><a href='https://cloud.drone.io/ZyCromerZ/droneci-builder/$DRONE_BUILD_NUMBER/1/2'> Check Here </a>%0A<b>Host Core Count : $TotalCores cores </b>%0A<b>Kernel Version: $KVer</b>%0A<b>Last Commit-Id: $HeadCommitId </b>%0A<b>Last Commit-Message: $HeadCommitMsg </b>%0A<b>Builder Info: </b>%0A<code>xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx</code>%0A<code>- $ClangType </code>%0A<code>- $gcc64Type </code>%0A<code>- $gcc32Type </code>%0A<code>xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx</code>%0A%0A #$TypeBuildTag  #$TypeBuild"
+    if [ ! -z "$1" ];then
+        tg_send_info "$MSG" "$1"
+    else
+        tg_send_info "$MSG" 
+    fi
     make -j${TotalCores}  O=out ARCH="$ARCH" "$DEFFCONFIG"
     make -j${TotalCores}  O=out \
         ARCH=$ARCH \
@@ -174,9 +186,18 @@ CompileKernel(){
         else
             ZipName="[$GetBD][$TypeBuildTag][$TypeBuild][$CODENAME]$KVer-$KName-$HeadCommitId.zip"
         fi
-        MakeZip
+        if [ ! -z "$1" ];then
+            MakeZip "$1"
+        else
+            MakeZip
+        fi
     else
-        tg_send_info "<b>❌ Build failed [$((DIFF / 60)):$((DIFF % 60))]</b>%0Asad"
+        MSG="<b>❌ Build failed</b>%0A- <code>$((DIFF / 60)) minute(s) $((DIFF % 60)) second(s)</code>%0A%0ASad Boy"
+        if [ ! -z "$1" ];then
+            tg_send_info "$MSG" "$1"
+        else
+            tg_send_info "$MSG" 
+        fi
         exit -1
     fi
 }
@@ -189,7 +210,11 @@ MakeZip(){
     cp -af anykernel-real.sh anykernel.sh && sed -i "s/kernel.string=.*/kernel.string=$KName-$HeadCommitId by ZyCromerZ/g" anykernel.sh
 
     zip -r9 "$ZipName" * -x .git README.md anykernel-real.sh .gitignore *.zip
-    tg_send_files
+    if [ ! -z "$1" ];then
+        tg_send_files "$1"
+    else
+        tg_send_files
+    fi
 
 }
 getInfo 'include main.sh success'
