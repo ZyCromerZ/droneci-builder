@@ -95,12 +95,12 @@ fi
 
 tg_send_info(){
     if [ ! -z "$2" ];then
-        curl -X -s POST "https://api.telegram.org/bot$BOT_TOKEN/sendMessage" -d chat_id="$2" \
+        curl -X POST "https://api.telegram.org/bot$BOT_TOKEN/sendMessage" -d chat_id="$2" \
         -d "disable_web_page_preview=true" \
         -d "parse_mode=html" \
         -d text="$1"
     else
-        curl -X -s POST "https://api.telegram.org/bot$BOT_TOKEN/sendMessage" -d chat_id="-1001150624898" \
+        curl -X POST "https://api.telegram.org/bot$BOT_TOKEN/sendMessage" -d chat_id="-1001150624898" \
         -d "disable_web_page_preview=true" \
         -d "parse_mode=html" \
         -d text="$1"
@@ -167,6 +167,7 @@ CompileKernel(){
     BUILD_END=$(date +"%s")
     DIFF=$((BUILD_END - BUILD_START))
     if [ -f $kernelDir/out/arch/$ARCH/boot/Image.gz-dtb ];then
+        cp -af $kernelDir/out/arch/$ARCH/boot/Image.gz-dtb $AnykernelDir
         KName=$(cat "$(pwd)/arch/arm64/configs/begonia_user_defconfig" | grep "CONFIG_LOCALVERSION=" | sed 's/CONFIG_LOCALVERSION="-*//g' | sed 's/"*//g' )
         if [ $TypeBuild == "Stable" ];then
             ZipName="[$TypeBuildTag][$CODENAME]$KVer-$KName-$HeadCommitId.zip"
