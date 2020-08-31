@@ -108,12 +108,14 @@ tg_send_info(){
 }
 
 tg_send_files(){
-	MD5CHECK=$(md5sum "$1" | cut -d' ' -f1)
-	curl --progress-bar -F document=@"$1" "https://api.telegram.org/bot$BOT_TOKEN/sendMessage" \
+	MD5CHECK=$(md5sum "$(pwd)/$ZipName" | cut -d' ' -f1)
+	curl --progress-bar -F document=@"$(pwd)/$ZipName" "https://api.telegram.org/bot$BOT_TOKEN/sendMessage" \
 	-F chat_id="$SaveChatID"  \
 	-F "disable_web_page_preview=true" \
 	-F "parse_mode=html" \
-	-F caption="✅ <b>Build Success : $((DIFF / 60)):$((DIFF % 60)) </b>%0A<b>MD5 Checksum : </b><code>$MD5CHECK</code>Filename"
+	-F caption="✅ <b>Build Success : $((DIFF / 60)):$((DIFF % 60)) </b>%0A<b>MD5 Checksum : </b><code>$MD5CHECK</code>Zip Name : <code>$ZipName</code>"
+    
+    tg_send_info "✅ <b>Build Success : $((DIFF / 60)):$((DIFF % 60)) </b>%0A<b>MD5 Checksum : </b><code>$MD5CHECK</code>Zip Name : <code>$ZipName</code>"
 }
 
 CompileKernel(){
@@ -180,14 +182,12 @@ CompileKernel(){
 MakeZip(){
     cd $AnykernelDir
     if [ ! -z "$spectrumFile" ];then
-        cp -af $SpectrumDir/$spectrumFile init.spectrum.rc
-        sed -i "s/persist.spectrum.kernel.*/persist.spectrum.kernel $KName/g" AnyKernel3/init.spectrum.rc
+        cp -af $SpectrumDir/$spectrumFile init.spectrum.rc && sed -i "s/persist.spectrum.kernel.*/persist.spectrum.kernel $KName/g" init.spectrum.rc
     fi
-    cp -af AnyKernel3/anykernel-real.sh AnyKernel3/anykernel.sh
-    sed -i "s/kernel.string=.*/kernel.string=$KName-$HeadCommitId by ZyCromerZ/g" AnyKernel3/anykernel.sh
+    cp -af anykernel-real.sh anykernel.sh && sed -i "s/kernel.string=.*/kernel.string=$KName-$HeadCommitId by ZyCromerZ/g" anykernel.sh
 
     zip -r9 "$ZipName" * -x .git README.md anykernel-real.sh .gitignore *.zip
-    tg_send_files "$ZipName"
+    tg_send_files
 
 }
 getInfo 'include main.sh success'
