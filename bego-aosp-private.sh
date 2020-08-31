@@ -4,7 +4,7 @@ branch="20200706/DeathFlower-upstream"
 
 spectrumFile="bego-on.rc"
 TypeBuild="Stable-Private"
-TypeBuildTag="Miui-A10"
+TypeBuildTag="AOSP-CFW"
 getInfo ">> Building kernel . . . . <<"
 
 CompileKernel

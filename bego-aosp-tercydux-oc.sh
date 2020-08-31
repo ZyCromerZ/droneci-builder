@@ -4,7 +4,7 @@ branch="20200706/Tercydux-OC"
 
 spectrumFile="bego-on.rc"
 TypeBuild="Stable"
-TypeBuildTag="Miui-A10"
+TypeBuildTag="AOSP-CFW"
 getInfo ">> Building kernel . . . . <<"
 
 CompileKernel
