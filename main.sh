@@ -95,12 +95,12 @@ fi
 
 tg_send_info(){
     if [ ! -z "$2" ];then
-        curl -X POST "https://api.telegram.org/bot$BOT_TOKEN/sendMessage" -d chat_id="$2" \
+        curl -X -s POST "https://api.telegram.org/bot$BOT_TOKEN/sendMessage" -d chat_id="$2" \
         -d "disable_web_page_preview=true" \
         -d "parse_mode=html" \
         -d text="$1"
     else
-        curl -X POST "https://api.telegram.org/bot$BOT_TOKEN/sendMessage" -d chat_id="-1001150624898" \
+        curl -X -s POST "https://api.telegram.org/bot$BOT_TOKEN/sendMessage" -d chat_id="-1001150624898" \
         -d "disable_web_page_preview=true" \
         -d "parse_mode=html" \
         -d text="$1"
@@ -109,13 +109,14 @@ tg_send_info(){
 
 tg_send_files(){
 	MD5CHECK=$(md5sum "$(pwd)/$ZipName" | cut -d' ' -f1)
-	curl --progress-bar -F document=@"$(pwd)/$ZipName" "https://api.telegram.org/bot$BOT_TOKEN/sendMessage" \
+	curl --progress-bar -F document=@"$(pwd)/$ZipName" "https://api.telegram.org/bot$BOT_TOKEN/sendDocument" \
 	-F chat_id="$SaveChatID"  \
 	-F "disable_web_page_preview=true" \
 	-F "parse_mode=html" \
 	-F caption="✅ <b>Build Success : $((DIFF / 60)):$((DIFF % 60)) </b>%0A<b>MD5 Checksum : </b><code>$MD5CHECK</code>Zip Name : <code>$ZipName</code>"
-    
     tg_send_info "✅ <b>Build Success : $((DIFF / 60)):$((DIFF % 60)) </b>%0A<b>MD5 Checksum : </b><code>$MD5CHECK</code>Zip Name : <code>$ZipName</code>"
+    # remove files after build done
+    rm -rf $(pwd)/$ZipName
 }
 
 CompileKernel(){
