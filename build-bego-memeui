@@ -1,5 +1,9 @@
 #! /bin/bash
-
+if [ ! -z "$1" ];then
+    TAGS="-rc"
+else
+    TAGS=""
+fi
 function update_file() {
     if [ ! -z "$1" ] && [ ! -z "$2" ] && [ ! -z "$3" ];then
         GetValue="$(cat "$3" | grep "$1")"
@@ -18,11 +22,11 @@ function make_changes() {
 
 for Files in bego-memeui-private bego-memeui-qk-n bego-memeui-qk-l bego-memeui-tercydux bego-memeui-tercydux-oc
 do
-    git branch -D $Files
-    make_changes $Files
+    git branch -D $Files$TAGS
+    make_changes $Files$TAGS
 done
 
 git push -f origin \
-bego-memeui-private bego-memeui-qk-n bego-memeui-qk-l bego-memeui-tercydux bego-memeui-tercydux-oc
+bego-memeui-private$TAGS bego-memeui-qk-n$TAGS bego-memeui-qk-l$TAGS bego-memeui-tercydux$TAGS bego-memeui-tercydux-oc$TAGS
 
 git checkout master
