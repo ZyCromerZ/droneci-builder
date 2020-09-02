@@ -3,7 +3,7 @@ branch="20200706/qk-n-rc"
 . main.sh 'initial'
 
 spectrumFile="bego-on.rc"
-TypeBuild="Stable"
+TypeBuild="Stable-RC"
 TypeBuildTag="AOSP-CFW"
 getInfo ">> Building kernel . . . . <<"
 
