@@ -109,7 +109,7 @@ tg_send_info(){
 }
 
 tg_send_files(){
-	MD5CHECK=$(md5sum "$(pwd)/$ZipName" | cut -d' ' -f1)
+	MD5CHECK=$(md5sum "$(pwd)/$RealZipName" | cut -d' ' -f1)
     MSG="✅ <b>Build Success</b> 
 - <code>$((DIFF / 60)) minute(s) $((DIFF % 60)) second(s) </code> 
 
