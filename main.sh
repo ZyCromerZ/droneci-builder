@@ -119,7 +119,7 @@ tg_send_files(){
 <b>Zip Name</b> 
 - <code>$ZipName</code>"
 
-	curl --progress-bar -F document=@"$(pwd)/$ZipName" "https://api.telegram.org/bot$BOT_TOKEN/sendDocument" \
+	curl --progress-bar -F document=@"$(pwd)/$RealZipName" "https://api.telegram.org/bot$BOT_TOKEN/sendDocument" \
 	-F chat_id="$SaveChatID"  \
 	-F "disable_web_page_preview=true" \
 	-F "parse_mode=html" \
@@ -194,6 +194,7 @@ CompileKernel(){
         else
             ZipName="[$GetBD][$TypeBuildTag][$TypeBuild][$CODENAME]$KVer-$KName-$HeadCommitId.zip"
         fi
+        RealZipName="[$GetBD]$KVer-$HeadCommitId.zip"
         if [ ! -z "$1" ];then
             MakeZip "$1"
         else
@@ -217,7 +218,7 @@ MakeZip(){
     fi
     cp -af anykernel-real.sh anykernel.sh && sed -i "s/kernel.string=.*/kernel.string=$KName-$HeadCommitId by ZyCromerZ/g" anykernel.sh
 
-    zip -r9 "$ZipName" * -x .git README.md anykernel-real.sh .gitignore *.zip
+    zip -r9 "$RealZipName" * -x .git README.md anykernel-real.sh .gitignore *.zip
     if [ ! -z "$1" ];then
         tg_send_files "$1"
     else
