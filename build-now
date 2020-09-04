@@ -1,9 +1,5 @@
 #! /bin/bash
-if [ ! -z "$1" ];then
-    TAGS="-rc"
-else
-    TAGS=""
-fi
+
 function update_file() {
     if [ ! -z "$1" ] && [ ! -z "$2" ] && [ ! -z "$3" ];then
         GetValue="$(cat "$3" | grep "$1")"
@@ -16,17 +12,17 @@ function update_file() {
     fi
 }
 function make_changes() {
-    git checkout master && git checkout -b $1 && \
+    git checkout xotod && git checkout -b $1 && \
     git checkout $1 && update_file 'main.sh' "$1.sh" './.drone.yml'
 }
 
-for Files in bego-aosp-private bego-aosp-qk-n bego-aosp-qk-l bego-aosp-tercydux bego-aosp-tercydux-oc
+for Files in kernel
 do
-    git branch -D $Files$TAGS
-    make_changes $Files$TAGS
+    git branch -D $Files
+    make_changes $Files
 done
 
 git push -f origin \
-bego-aosp-private$TAGS bego-aosp-qk-n$TAGS bego-aosp-qk-l$TAGS bego-aosp-tercydux$TAGS bego-aosp-tercydux-oc$TAGS
+kernel
 
-git checkout master
+git checkout xotod
