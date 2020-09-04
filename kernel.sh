@@ -1,10 +1,9 @@
 #! /bin/bash
-branch="mi10/20200829-Tercydux-OC"
+branch="lineage-17.1"
 . main.sh 'initial'
 
-spectrumFile="bego-on-memeui.rc"
 TypeBuild="Stable"
-TypeBuildTag="Miui-A10"
+TypeBuildTag="AOSP"
 getInfo ">> Building kernel . . . . <<"
 
 CompileKernel

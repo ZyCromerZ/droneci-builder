@@ -35,7 +35,7 @@ mainDir=$PWD
 
 kernelDir=$mainDir/kernel
 
-clangDir=$mainDir/clang
+# clangDir=$mainDir/clang
 
 gcc64Dir=$mainDir/gcc64
 
@@ -43,33 +43,30 @@ gcc32Dir=$mainDir/gcc32
 
 AnykernelDir=$mainDir/Anykernel3
 
-SpectrumDir=$mainDir/Spectrum
 
 if [ ! -z "$1" ] && [ "$1" == 'initial' ];then
     getInfo ">> cloning kernel . . . <<"
-    git clone https://$GIT_SECRET@github.com/ZyCromerZ/begonia_kernel -b "$branch" $kernelDir --depth=1 
-    getInfo ">> cloning clang . . . <<"
-    git clone https://github.com/ZyCromerZ/google-clang -b 9.0.4-r353983d $clangDir --depth=1
+    git clone https://github.com/VISakura/android_kernel_asus_sdm660 -b "$branch" $kernelDir --depth=1 
+    # getInfo ">> cloning clang . . . <<"
+    # git clone https://github.com/ZyCromerZ/google-clang -b 9.0.4-r353983d $clangDir --depth=1
     getInfo ">> cloning gcc64 . . . <<"
-    git clone https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9/ -b android-10.0.0_r45 $gcc64Dir --depth=1
+    git clone https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9/ -b ndk-r19 $gcc64Dir --depth=1
     getInfo ">> cloning gcc32 . . . <<"
-    git clone https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9/ -b android-10.0.0_r45 $gcc32Dir --depth=1
+    git clone https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9/ -b ndk-r19 $gcc32Dir --depth=1
     getInfo ">> cloning Anykernel . . . <<"
-    git clone https://github.com/ZyCromerZ/AnyKernel3 -b master-begonia $AnykernelDir --depth=1
-    getInfo ">> cloning Spectrum . . . <<"
-    git clone https://github.com/ZyCromerZ/Spectrum -b master $SpectrumDir --depth=1
+    git clone https://github.com/VISakura/AnyKernel3 -b master-x00td $AnykernelDir --depth=1
     
-    DEVICE="Redmi Note 8 pro"
-    CODENAME="Begonia"
-    SaveChatID="-1001301538740"
+    DEVICE="Asus Max Pro M1"
+    CODENAME="X00TD"
+    SaveChatID="-1001389383193"
     ARCH="arm64"
     TypeBuild="Stable"
-    DEFFCONFIG="begonia_user_defconfig"
+    DEFFCONFIG="X00TD_defconfig"
     GetBD=$(date +"%m%d")
     GetCBD=$(date +"%Y-%m-%d")
     TotalCores=$(nproc --all)
-    TypeBuildTag="AOSP-CFW"
-    export KBUILD_BUILD_USER="ZyCromerZ"
+    TypeBuildTag="AOSP"
+    export KBUILD_BUILD_USER="Hazukashio"
     export KBUILD_BUILD_HOST="DroneCI-server"
     export KBUILD_BUILD_VERSION=$DRONE_BUILD_NUMBER
     ClangType="$($clangDir/bin/clang --version | head -n 1)"
@@ -136,26 +133,26 @@ tg_send_files(){
 
 CompileKernel(){
     cd $kernelDir
-    MAKE+=(
-            ARCH=$ARCH \
-            SUBARCH=$ARCH \
-            PATH=$clangDir/bin:$gcc64Dir/bin/:$gcc32Dir/bin/:/usr/bin:${PATH} \
-            LD_LIBRARY_PATH="$clangDir/lib64:${LD_LIBRARY_PATH}" \
-            CC=clang \
-            CROSS_COMPILE=aarch64-linux-android- \
-            CROSS_COMPILE_ARM32=arm-linux-androideabi- \
-            AS=llvm-as \
-            NM=llvm-nm \
-            OBJDUMP=llvm-objdump \
-            OBJSIZE=llvm-size \
-            READELF=llvm-readelf \
-            STRIP=llvm-strip \
-            HOSTCC=clang \
-            HOSTCXX=clang++ \
-            HOSTLD=ld.lld \
-            LD=ld.lld \
-            CLANG_TRIPLE=aarch64-linux-gnu-
-    )
+    # MAKE+=(
+    #         ARCH=$ARCH \
+    #         SUBARCH=$ARCH \
+    #         PATH=$clangDir/bin:$gcc64Dir/bin/:$gcc32Dir/bin/:/usr/bin:${PATH} \
+    #         LD_LIBRARY_PATH="$clangDir/lib64:${LD_LIBRARY_PATH}" \
+    #         CC=clang \
+    #         CROSS_COMPILE=aarch64-linux-android- \
+    #         CROSS_COMPILE_ARM32=arm-linux-androideabi- \
+    #         AS=llvm-as \
+    #         NM=llvm-nm \
+    #         OBJDUMP=llvm-objdump \
+    #         OBJSIZE=llvm-size \
+    #         READELF=llvm-readelf \
+    #         STRIP=llvm-strip \
+    #         HOSTCC=clang \
+    #         HOSTCXX=clang++ \
+    #         HOSTLD=ld.lld \
+    #         LD=ld.lld \
+    #         CLANG_TRIPLE=aarch64-linux-gnu-
+    # )
     rm -rf out # always remove out directory :V
     BUILD_START=$(date +"%s")
     MSG="<b>🔨 New Kernel On The Way</b>%0A<b>Branch: $branch</b>%0A<b>Build Date: $GetCBD </b>%0A<b>Build Number: $DRONE_BUILD_NUMBER </b>%0A<b>Build Link Progress:</b><a href='https://cloud.drone.io/ZyCromerZ/droneci-builder/$DRONE_BUILD_NUMBER/1/2'> Check Here </a>%0A<b>Host Core Count : $TotalCores cores </b>%0A<b>Kernel Version: $KVer</b>%0A<b>Last Commit-Id: $HeadCommitId </b>%0A<b>Last Commit-Message: $HeadCommitMsg </b>%0A<b>Builder Info: </b>%0A<code>xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx</code>%0A<code>- $ClangType </code>%0A<code>- $gcc64Type </code>%0A<code>- $gcc32Type </code>%0A<code>xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx</code>%0A%0A #$TypeBuildTag  #$TypeBuild"
@@ -168,22 +165,9 @@ CompileKernel(){
     make -j${TotalCores}  O=out \
         ARCH=$ARCH \
         SUBARCH=$ARCH \
-        PATH=$clangDir/bin:$gcc64Dir/bin/:$gcc32Dir/bin/:/usr/bin:${PATH} \
-        LD_LIBRARY_PATH="$clangDir/lib64:${LD_LIBRARY_PATH}" \
-        CC=clang \
+        PATH=$gcc64Dir/bin/:$gcc32Dir/bin/:/usr/bin:${PATH} \
         CROSS_COMPILE=aarch64-linux-android- \
-        CROSS_COMPILE_ARM32=arm-linux-androideabi- \
-        AS=llvm-as \
-        NM=llvm-nm \
-        OBJDUMP=llvm-objdump \
-        OBJSIZE=llvm-size \
-        READELF=llvm-readelf \
-        STRIP=llvm-strip \
-        HOSTCC=clang \
-        HOSTCXX=clang++ \
-        HOSTLD=ld.lld \
-        LD=ld.lld \
-        CLANG_TRIPLE=aarch64-linux-gnu-
+        CROSS_COMPILE_ARM32=arm-linux-androideabi-
     BUILD_END=$(date +"%s")
     DIFF=$((BUILD_END - BUILD_START))
     if [ -f $kernelDir/out/arch/$ARCH/boot/Image.gz-dtb ];then
@@ -213,9 +197,6 @@ CompileKernel(){
 
 MakeZip(){
     cd $AnykernelDir
-    if [ ! -z "$spectrumFile" ];then
-        cp -af $SpectrumDir/$spectrumFile init.spectrum.rc && sed -i "s/persist.spectrum.kernel.*/persist.spectrum.kernel $KName/g" init.spectrum.rc
-    fi
     cp -af anykernel-real.sh anykernel.sh && sed -i "s/kernel.string=.*/kernel.string=$KName-$HeadCommitId by ZyCromerZ/g" anykernel.sh
 
     zip -r9 "$RealZipName" * -x .git README.md anykernel-real.sh .gitignore *.zip
