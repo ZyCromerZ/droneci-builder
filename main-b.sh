@@ -132,7 +132,7 @@ tg_send_files(){
         tg_send_info "$MSG"
     fi
     # remove files after build done
-    rm -rf $(pwd)/$ZipName
+    rm -rf $(pwd)/$RealZipName
 }
 
 CompileKernel(){
