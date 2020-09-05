@@ -141,20 +141,9 @@ CompileKernel(){
             ARCH=$ARCH \
             SUBARCH=$ARCH \
             PATH=$clangDir/bin:$gcc64Dir/bin/:$gcc32Dir/bin/:/usr/bin:${PATH} \
-            LD_LIBRARY_PATH="$clangDir/lib64:${LD_LIBRARY_PATH}" \
             CC=clang \
             CROSS_COMPILE=aarch64-linux-android- \
             CROSS_COMPILE_ARM32=arm-linux-androideabi- \
-            AS=llvm-as \
-            NM=llvm-nm \
-            OBJDUMP=llvm-objdump \
-            OBJSIZE=llvm-size \
-            READELF=llvm-readelf \
-            STRIP=llvm-strip \
-            HOSTCC=clang \
-            HOSTCXX=clang++ \
-            HOSTLD=ld.lld \
-            LD=ld.lld \
             CLANG_TRIPLE=aarch64-linux-gnu-
     )
     rm -rf out # always remove out directory :V
@@ -170,20 +159,9 @@ CompileKernel(){
         ARCH=$ARCH \
         SUBARCH=$ARCH \
         PATH=$clangDir/bin:$gcc64Dir/bin/:$gcc32Dir/bin/:/usr/bin:${PATH} \
-        LD_LIBRARY_PATH="$clangDir/lib64:${LD_LIBRARY_PATH}" \
         CC=clang \
         CROSS_COMPILE=aarch64-linux-android- \
         CROSS_COMPILE_ARM32=arm-linux-androideabi- \
-        AS=llvm-as \
-        NM=llvm-nm \
-        OBJDUMP=llvm-objdump \
-        OBJSIZE=llvm-size \
-        READELF=llvm-readelf \
-        STRIP=llvm-strip \
-        HOSTCC=clang \
-        HOSTCXX=clang++ \
-        HOSTLD=ld.lld \
-        LD=ld.lld \
         CLANG_TRIPLE=aarch64-linux-gnu-
     BUILD_END=$(date +"%s")
     DIFF=$((BUILD_END - BUILD_START))
