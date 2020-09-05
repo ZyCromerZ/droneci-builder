@@ -1,5 +1,5 @@
 #! /bin/bash
-branch="tercydux/20200825/a"
+branch="private/20200825/a"
 . main-b.sh 'initial'
 
 spectrumFile="f.rc"
