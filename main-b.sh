@@ -167,7 +167,7 @@ CompileKernel(){
     DIFF=$((BUILD_END - BUILD_START))
     if [ -f $kernelDir/out/arch/$ARCH/boot/Image.gz-dtb ];then
         cp -af $kernelDir/out/arch/$ARCH/boot/Image.gz-dtb $AnykernelDir
-        KName=$(cat "$(pwd)/arch/arm64/configs/begonia_user_defconfig" | grep "CONFIG_LOCALVERSION=" | sed 's/CONFIG_LOCALVERSION="-*//g' | sed 's/"*//g' )
+        KName=$(cat "$(pwd)/arch/$ARCH/configs/$DEFFCONFIG" | grep "CONFIG_LOCALVERSION=" | sed 's/CONFIG_LOCALVERSION="-*//g' | sed 's/"*//g' )
         if [ $TypeBuild == "Stable" ];then
             ZipName="[$KernelFor][$GetBD][$TypeBuildTag][$CODENAME]$KVer-$KName-$HeadCommitId.zip"
         else
