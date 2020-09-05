@@ -45,7 +45,7 @@ AnykernelDir=$mainDir/Anykernel3
 
 SpectrumDir=$mainDir/Spectrum
 
-if [ ! -z "$1" ] && [ "$1" == 'begonia' ];then
+if [ ! -z "$1" ] && [ "$1" == 'initial' ];then
     getInfo ">> cloning kernel . . . <<"
     git clone https://$GIT_SECRET@github.com/ZyCromerZ/X01BD_kernel -b "$branch" $kernelDir 
     getInfo ">> cloning clang . . . <<"
@@ -55,7 +55,7 @@ if [ ! -z "$1" ] && [ "$1" == 'begonia' ];then
     getInfo ">> cloning gcc32 . . . <<"
     git clone https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9/ -b android-10.0.0_r45 $gcc32Dir --depth=1
     getInfo ">> cloning Anykernel . . . <<"
-    git clone https://github.com/ZyCromerZ/AnyKernel3 -b master-begonia $AnykernelDir --depth=1
+    git clone https://github.com/ZyCromerZ/AnyKernel3 -b master $AnykernelDir --depth=1
     getInfo ">> cloning Spectrum . . . <<"
     git clone https://github.com/ZyCromerZ/Spectrum -b master $SpectrumDir --depth=1
     
