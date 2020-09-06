@@ -2,7 +2,7 @@
 
  # Script For Building Android Kernel
  #
- # Copyright (c) 2018-2020 Panchajanya1999 <rsk52959@gmail.com>
+ # Copyright (c) 2020 ZyCromerZ <neetroid97@gmail.com>
  #
  # Licensed under the Apache License, Version 2.0 (the "License");
  # you may not use this file except in compliance with the License.
