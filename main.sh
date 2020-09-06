@@ -46,8 +46,13 @@ AnykernelDir=$mainDir/Anykernel3
 SpectrumDir=$mainDir/Spectrum
 
 if [ ! -z "$1" ] && [ "$1" == 'initial' ];then
-    getInfo ">> cloning kernel . . . <<"
-    git clone https://$GIT_SECRET@github.com/ZyCromerZ/begonia_kernel -b "$branch" $kernelDir --depth=1 
+    if [ ! -z "$2" ] && [ "$2" == 'full' ];then
+        getInfo ">> cloning kernel full . . . <<"
+        git clone https://$GIT_SECRET@github.com/ZyCromerZ/begonia_kernel -b "$branch" $kernelDir
+    else
+        getInfo ">> cloning kernel . . . <<"
+        git clone https://$GIT_SECRET@github.com/ZyCromerZ/begonia_kernel -b "$branch" $kernelDir --depth=1 
+    fi
     getInfo ">> cloning clang . . . <<"
     git clone https://github.com/ZyCromerZ/google-clang -b 9.0.4-r353983d $clangDir --depth=1
     getInfo ">> cloning gcc64 . . . <<"
