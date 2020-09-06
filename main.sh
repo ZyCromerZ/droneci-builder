@@ -74,6 +74,7 @@ if [ ! -z "$1" ] && [ "$1" == 'initial' ];then
     GetCBD=$(date +"%Y-%m-%d")
     TotalCores=$(nproc --all)
     TypeBuildTag="AOSP-CFW"
+    FullLto="YES"
     export KBUILD_BUILD_USER="ZyCromerZ"
     export KBUILD_BUILD_HOST="DroneCI-server"
     export KBUILD_BUILD_VERSION=$DRONE_BUILD_NUMBER
@@ -141,7 +142,50 @@ tg_send_files(){
 
 CompileKernel(){
     cd $kernelDir
-    MAKE+=(
+    if [ "$FullLto" == "YES" ];then
+        MAKE+=(
+                ARCH=$ARCH \
+                SUBARCH=$ARCH \
+                PATH=$clangDir/bin:$gcc64Dir/bin/:$gcc32Dir/bin/:/usr/bin:${PATH} \
+                LD_LIBRARY_PATH="$clangDir/lib64:${LD_LIBRARY_PATH}" \
+                CC=clang \
+                CROSS_COMPILE=aarch64-linux-android- \
+                CROSS_COMPILE_ARM32=arm-linux-androideabi- \
+                AS=llvm-as \
+                NM=llvm-nm \
+                OBJDUMP=llvm-objdump \
+                OBJSIZE=llvm-size \
+                READELF=llvm-readelf \
+                STRIP=llvm-strip \
+                HOSTCC=clang \
+                HOSTCXX=clang++ \
+                HOSTLD=ld.lld \
+                LD=ld.lld \
+                CLANG_TRIPLE=aarch64-linux-gnu-
+        )
+    else
+        MAKE+=(
+                ARCH=$ARCH \
+                SUBARCH=$ARCH \
+                PATH=$clangDir/bin:$gcc64Dir/bin/:$gcc32Dir/bin/:/usr/bin:${PATH} \
+                LD_LIBRARY_PATH="$clangDir/lib64:${LD_LIBRARY_PATH}" \
+                CC=clang \
+                CROSS_COMPILE=aarch64-linux-android- \
+                CROSS_COMPILE_ARM32=arm-linux-androideabi- \
+                CLANG_TRIPLE=aarch64-linux-gnu-
+        )
+    fi
+    rm -rf out # always remove out directory :V
+    BUILD_START=$(date +"%s")
+    MSG="<b>🔨 New Kernel On The Way</b>%0A<b>Device: $DEVICE</b>%0A<b>Codename: $CODENAME</b>%0A<b>Branch: $branch</b>%0A<b>Build Date: $GetCBD </b>%0A<b>Build Number: $DRONE_BUILD_NUMBER </b>%0A<b>Build Link Progress:</b><a href='https://cloud.drone.io/ZyCromerZ/droneci-builder/$DRONE_BUILD_NUMBER/1/2'> Check Here </a>%0A<b>Host Core Count : $TotalCores cores </b>%0A<b>Kernel Version: $KVer</b>%0A<b>Last Commit-Id: $HeadCommitId </b>%0A<b>Last Commit-Message: $HeadCommitMsg </b>%0A<b>Builder Info: </b>%0A<code>xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx</code>%0A<code>- $ClangType </code>%0A<code>- $gcc64Type </code>%0A<code>- $gcc32Type </code>%0A<code>xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx</code>%0A%0A #$TypeBuildTag  #$TypeBuild"
+    if [ ! -z "$1" ];then
+        tg_send_info "$MSG" "$1"
+    else
+        tg_send_info "$MSG" 
+    fi
+    make -j${TotalCores}  O=out ARCH="$ARCH" "$DEFFCONFIG"
+    if [ "$FullLto" == "YES" ];then
+        make -j${TotalCores}  O=out \
             ARCH=$ARCH \
             SUBARCH=$ARCH \
             PATH=$clangDir/bin:$gcc64Dir/bin/:$gcc32Dir/bin/:/usr/bin:${PATH} \
@@ -160,35 +204,17 @@ CompileKernel(){
             HOSTLD=ld.lld \
             LD=ld.lld \
             CLANG_TRIPLE=aarch64-linux-gnu-
-    )
-    rm -rf out # always remove out directory :V
-    BUILD_START=$(date +"%s")
-    MSG="<b>🔨 New Kernel On The Way</b>%0A<b>Device: $DEVICE</b>%0A<b>Codename: $CODENAME</b>%0A<b>Branch: $branch</b>%0A<b>Build Date: $GetCBD </b>%0A<b>Build Number: $DRONE_BUILD_NUMBER </b>%0A<b>Build Link Progress:</b><a href='https://cloud.drone.io/ZyCromerZ/droneci-builder/$DRONE_BUILD_NUMBER/1/2'> Check Here </a>%0A<b>Host Core Count : $TotalCores cores </b>%0A<b>Kernel Version: $KVer</b>%0A<b>Last Commit-Id: $HeadCommitId </b>%0A<b>Last Commit-Message: $HeadCommitMsg </b>%0A<b>Builder Info: </b>%0A<code>xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx</code>%0A<code>- $ClangType </code>%0A<code>- $gcc64Type </code>%0A<code>- $gcc32Type </code>%0A<code>xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx</code>%0A%0A #$TypeBuildTag  #$TypeBuild"
-    if [ ! -z "$1" ];then
-        tg_send_info "$MSG" "$1"
     else
-        tg_send_info "$MSG" 
+        make -j${TotalCores}  O=out \
+            ARCH=$ARCH \
+            SUBARCH=$ARCH \
+            PATH=$clangDir/bin:$gcc64Dir/bin/:$gcc32Dir/bin/:/usr/bin:${PATH} \
+            LD_LIBRARY_PATH="$clangDir/lib64:${LD_LIBRARY_PATH}" \
+            CC=clang \
+            CROSS_COMPILE=aarch64-linux-android- \
+            CROSS_COMPILE_ARM32=arm-linux-androideabi- \
+            CLANG_TRIPLE=aarch64-linux-gnu-
     fi
-    make -j${TotalCores}  O=out ARCH="$ARCH" "$DEFFCONFIG"
-    make -j${TotalCores}  O=out \
-        ARCH=$ARCH \
-        SUBARCH=$ARCH \
-        PATH=$clangDir/bin:$gcc64Dir/bin/:$gcc32Dir/bin/:/usr/bin:${PATH} \
-        LD_LIBRARY_PATH="$clangDir/lib64:${LD_LIBRARY_PATH}" \
-        CC=clang \
-        CROSS_COMPILE=aarch64-linux-android- \
-        CROSS_COMPILE_ARM32=arm-linux-androideabi- \
-        AS=llvm-as \
-        NM=llvm-nm \
-        OBJDUMP=llvm-objdump \
-        OBJSIZE=llvm-size \
-        READELF=llvm-readelf \
-        STRIP=llvm-strip \
-        HOSTCC=clang \
-        HOSTCXX=clang++ \
-        HOSTLD=ld.lld \
-        LD=ld.lld \
-        CLANG_TRIPLE=aarch64-linux-gnu-
     BUILD_END=$(date +"%s")
     DIFF=$((BUILD_END - BUILD_START))
     if [ -f $kernelDir/out/arch/$ARCH/boot/Image.gz-dtb ];then
