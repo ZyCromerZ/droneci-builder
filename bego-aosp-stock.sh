@@ -6,8 +6,9 @@ spectrumFile="bego-on.rc"
 TypeBuild="stock"
 TypeBuildTag="AOSP"
 getInfo ">> Building kernel . . . . <<"
+SaveChatID="-1001492974035"
 
-for GetCommit in a07f95f7dc0397ecdce36358e84af053a882f0d1 a2872257122a652104ca41d96c7d6d1a037acbe7 7d1095fb74bd7386227d57e1d80fd38077bae2c2 ff787cfb4eb2f9e30b6c53daef4aa9eaa0a53faa 53e45a3339ff7e9b905eb446d9286bdb10b779cb 038d5a0118dee26a7687329d5bc0b6d49db9c2d5
+for GetCommit in 5b13518208a0f3f08f21889f44215227e5d2b0ad 8f4677a16a8ea6c2774598f3484b6073a154019f c242006deb4097b252b58745525950c05e58b150 de8eab9d778f42a4ad437096c1dae6cf9c2b13a2 9eae96f9c78fbef755211890dedbd99a1ffa153c
 do
     cd $kernelDir
     git reset --hard $GetCommit
@@ -18,12 +19,12 @@ do
     CompileKernel "-1001492974035"
 done
 
-for GetCommit in 072c6f2f15bea8678c79b14458a669958029e393 8d5302fac7cf663922ff81d5cf3f215d7480eb54
-do
-    cd $kernelDir
-    git reset --hard $GetCommit
-    KVer=$(make kernelversion)
-    HeadCommitId=$(git log --pretty=format:'%h' -n1)
-    HeadCommitMsg=$(git log --pretty=format:'%s' -n1)
-    CompileKernel "-1001492974035"
-done
+# for GetCommit in 072c6f2f15bea8678c79b14458a669958029e393 8d5302fac7cf663922ff81d5cf3f215d7480eb54
+# do
+#     cd $kernelDir
+#     git reset --hard $GetCommit
+#     KVer=$(make kernelversion)
+#     HeadCommitId=$(git log --pretty=format:'%h' -n1)
+#     HeadCommitMsg=$(git log --pretty=format:'%s' -n1)
+#     CompileKernel "-1001492974035"
+# done
