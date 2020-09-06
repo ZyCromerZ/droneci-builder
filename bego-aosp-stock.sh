@@ -1,5 +1,5 @@
 #! /bin/bash
-branch="private/20200825/a"
+branch="20200724/root-upstream"
 . main.sh 'initial' 'full'
 
 spectrumFile="bego-on.rc"
