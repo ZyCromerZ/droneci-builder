@@ -1,10 +1,10 @@
 #! /bin/bash
 branch="20200907/main"
-. main.sh 'initial'
+. main-a.sh 'initial'
 
 spectrumFile="bego-on.rc"
-TypeBuild="STOCK"
-TypeBuildTag="AOSP"
+TypeBuild="Try"
+TypeBuildTag="AOSP-CFW"
 getInfo ">> Building kernel . . . . <<"
 
 CompileKernel
