@@ -1,6 +1,6 @@
 #! /bin/bash
 branch="20200706/DeathFlower-upstream-rc"
-. main.sh 'initial'
+. main-a.sh 'initial'
 
 spectrumFile="bego-on.rc"
 TypeBuild="Stable-RC-Private"
