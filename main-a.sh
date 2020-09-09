@@ -54,7 +54,7 @@ if [ ! -z "$1" ] && [ "$1" == 'initial' ];then
         git clone https://$GIT_SECRET@github.com/ZyCromerZ/begonia_kernel -b "$branch" $kernelDir --depth=1 
     fi
     getInfo ">> cloning clang . . . <<"
-    git clone https://github.com/NusantaraDevs/DragonTC -b 9.0 $clangDir --depth=1
+    git clone https://github.com/ZyCromerZ/google-clang -b 9.0.8-r365631c $clangDir --depth=1
     getInfo ">> cloning gcc64 . . . <<"
     git clone https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9/ -b android-10.0.0_r45 $gcc64Dir --depth=1
     getInfo ">> cloning gcc32 . . . <<"
