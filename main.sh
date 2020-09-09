@@ -79,6 +79,7 @@ if [ ! -z "$1" ] && [ "$1" == 'initial' ];then
     export KBUILD_BUILD_HOST="DroneCI-server"
     export KBUILD_BUILD_VERSION=$DRONE_BUILD_NUMBER
     ClangType="$($clangDir/bin/clang --version | head -n 1)"
+    KBUILD_COMPILER_STRING="$ClangType"
     if [ -e $gcc64Dir/bin/aarch64-linux-android-gcc ];then
         gcc64Type="$($gcc64Dir/bin/aarch64-linux-android-gcc --version | head -n 1)"
     else
@@ -142,6 +143,7 @@ tg_send_files(){
 
 CompileKernel(){
     cd $kernelDir
+    export KBUILD_COMPILER_STRING
     if [ "$FullLto" == "YES" ];then
         MAKE+=(
                 ARCH=$ARCH \
