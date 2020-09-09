@@ -1,5 +1,5 @@
 #! /bin/bash
-branch="20200706/qk-l-rc"
+branch="20200907/qk-l-rc"
 . main.sh 'initial'
 
 spectrumFile="bego-on.rc"

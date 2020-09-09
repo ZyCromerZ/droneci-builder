@@ -1,5 +1,5 @@
 #! /bin/bash
-branch="20200907/root-upstream"
+branch="20200907/root-upstream-mod"
 . main.sh 'initial'
 
 spectrumFile="bego-on.rc"
