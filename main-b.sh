@@ -146,6 +146,17 @@ CompileKernel(){
             CC=clang \
             CROSS_COMPILE=aarch64-linux-android- \
             CROSS_COMPILE_ARM32=arm-linux-androideabi- \
+            AR=llvm-ar \
+            AS=llvm-as \
+            NM=llvm-nm \
+            STRIP=llvm-strip \
+            OBJCOPY=llvm-objcopy \
+            OBJDUMP=llvm-objdump \
+            OBJSIZE=llvm-size \
+            READELF=llvm-readelf \
+            HOSTCC=clang \
+            HOSTCXX=clang++ \
+            HOSTAR=llvm-ar \
             CLANG_TRIPLE=aarch64-linux-gnu-
     )
     rm -rf out # always remove out directory :V
@@ -164,6 +175,17 @@ CompileKernel(){
         CC=clang \
         CROSS_COMPILE=aarch64-linux-android- \
         CROSS_COMPILE_ARM32=arm-linux-androideabi- \
+        AR=llvm-ar \
+        AS=llvm-as \
+        NM=llvm-nm \
+        STRIP=llvm-strip \
+        OBJCOPY=llvm-objcopy \
+        OBJDUMP=llvm-objdump \
+        OBJSIZE=llvm-size \
+        READELF=llvm-readelf \
+        HOSTCC=clang \
+        HOSTCXX=clang++ \
+        HOSTAR=llvm-ar \
         CLANG_TRIPLE=aarch64-linux-gnu-
     BUILD_END=$(date +"%s")
     DIFF=$((BUILD_END - BUILD_START))
