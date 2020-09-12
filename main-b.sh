@@ -49,7 +49,7 @@ if [ ! -z "$1" ] && [ "$1" == 'initial' ];then
     getInfo ">> cloning kernel . . . <<"
     git clone https://$GIT_SECRET@github.com/ZyCromerZ/X01BD_kernel -b "$branch" $kernelDir 
     getInfo ">> cloning clang . . . <<"
-    git clone https://github.com/kdrag0n/proton-clang -b master $clangDir --depth=1
+    git clone https://github.com/NusantaraDevs/DragonTC -b 10.0 $clangDir --depth=1
     getInfo ">> cloning gcc64 . . . <<"
     git clone https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9/ -b android-10.0.0_r45 $gcc64Dir --depth=1
     getInfo ">> cloning gcc32 . . . <<"
@@ -211,7 +211,7 @@ MakeZip(){
 FixPieWifi()
 {
     cd $kernelDir
-    git revert a0aeff5d2c620ef53e17dbb99d28ebfc522e4e8b --no-commit
+    git revert ad37d3e8088a6fbbcce5d9b622688bf1fbe615d2 --no-commit
     git commit -s -m "Fix wifi broken for Android 9"
     KVer=$(make kernelversion)
     HeadCommitId=$(git log --pretty=format:'%h' -n1)
