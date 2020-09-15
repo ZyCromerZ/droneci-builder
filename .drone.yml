@@ -6,7 +6,7 @@ name: ZyCPipeline
 steps: 
   - 
     commands: 
-      - "bash ./main.sh"
+      - "bash ./xobod-private.sh"
     environment: 
       BOT_TOKEN: 
         from_secret: BOT_API_KEY
