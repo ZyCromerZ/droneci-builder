@@ -1,9 +1,9 @@
 #! /bin/bash
-branch="20200911/deathflower"
+branch="20200911/tercydux-a"
 . main-b.sh 'initial'
 
-spectrumFile="f.rc"
-TypeBuild="Stable-Private"
+spectrumFile="none"
+TypeBuild="Stable-TEST"
 TypeBuildTag="AOSP"
 getInfo ">> Building kernel . . . . <<"
 
