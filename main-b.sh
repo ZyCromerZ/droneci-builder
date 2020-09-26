@@ -45,6 +45,8 @@ AnykernelDir=$mainDir/Anykernel3
 
 SpectrumDir=$mainDir/Spectrum
 
+GdriveDir=$mainDir/Gdrive-Uploader
+
 if [ ! -z "$1" ] && [ "$1" == 'initial' ];then
     getInfo ">> cloning kernel . . . <<"
     git clone https://$GIT_SECRET@github.com/ZyCromerZ/X01BD_kernel -b "$branch" $kernelDir 
@@ -58,6 +60,8 @@ if [ ! -z "$1" ] && [ "$1" == 'initial' ];then
     git clone https://github.com/ZyCromerZ/AnyKernel3 -b master $AnykernelDir --depth=1
     getInfo ">> cloning Spectrum . . . <<"
     git clone https://github.com/ZyCromerZ/Spectrum -b master $SpectrumDir --depth=1
+    getInfo ">> cloning Gdrive Uploader . . . <<"
+    git clone https://$GIT_SECRET@github.com/ZyCromerZ/gdrive_uploader -b master $GdriveDir --depth=1 
     
     DEVICE="Asus Max Pro M2"
     CODENAME="X01BD"
@@ -111,7 +115,8 @@ tg_send_info(){
 }
 
 tg_send_files(){
-	MD5CHECK=$(md5sum "$(pwd)/$RealZipName" | cut -d' ' -f1)
+    KernelFiles="$(pwd)/$RealZipName"
+	MD5CHECK=$(md5sum "$KernelFiles" | cut -d' ' -f1)
     MSG="✅ <b>Build Success</b> 
 - <code>$((DIFF / 60)) minute(s) $((DIFF % 60)) second(s) </code> 
 
@@ -121,19 +126,24 @@ tg_send_files(){
 <b>Zip Name</b> 
 - <code>$ZipName</code>"
 
-	curl --progress-bar -F document=@"$(pwd)/$RealZipName" "https://api.telegram.org/bot$BOT_TOKEN/sendDocument" \
-	-F chat_id="$SaveChatID"  \
-	-F "disable_web_page_preview=true" \
-	-F "parse_mode=html" \
-	-F caption="$MSG"
-    
+	# curl --progress-bar -F document=@"$KernelFiles" "https://api.telegram.org/bot$BOT_TOKEN/sendDocument" \
+	# -F chat_id="$SaveChatID"  \
+	# -F "disable_web_page_preview=true" \
+	# -F "parse_mode=html" \
+	# -F caption="$MSG"
+
+    currentFolder="$(pwd)"
+    cd $GdriveDir
+    ./run.sh "$KernelFiles" "x01bd" "$(date +"%m-%d-%Y")"
+    cd $currentFolder
+
     if [ ! -z "$1" ];then
         tg_send_info "$MSG" "$1"
     else
         tg_send_info "$MSG"
     fi
     # remove files after build done
-    rm -rf $(pwd)/$RealZipName
+    rm -rf $KernelFiles
 }
 
 CompileKernel(){
@@ -197,7 +207,8 @@ CompileKernel(){
         else
             ZipName="[$KernelFor][$GetBD][$TypeBuildTag][$TypeBuild][$CODENAME]$KVer-$KName-$HeadCommitId.zip"
         fi
-        RealZipName="[$KernelFor][$GetBD]$KVer-$HeadCommitId.zip"
+        # RealZipName="[$GetBD]$KVer-$HeadCommitId.zip"
+        RealZipName="$ZipName"
         if [ ! -z "$1" ];then
             MakeZip "$1"
         else
