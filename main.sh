@@ -139,7 +139,8 @@ tg_send_files(){
 
     currentFolder="$(pwd)"
     cd $GdriveDir
-    ./run.sh "$KernelFiles" "begonia" "$(date +"%m-%d-%Y")"
+    chmod +x run.sh
+    . run.sh "$KernelFiles" "begonia" "$(date +"%m-%d-%Y")"
     cd $currentFolder
 
     if [ ! -z "$1" ];then
