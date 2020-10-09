@@ -6,7 +6,7 @@ name: ZyCPipeline
 steps: 
   - 
     commands: 
-      - "bash ./main.sh"
+      - "bash ./bego-aosp-stock-rc.sh"
     environment: 
       BOT_TOKEN: 
         from_secret: BOT_API_KEY
