@@ -2,7 +2,7 @@
 branch="20200907/DeathFlower-a"
 . main.sh 'initial'
 
-spectrumFile="bego-on-p.rc"
+spectrumFile="bego.rc"
 TypeBuild="Stable-Private"
 TypeBuildTag="AOSP-CFW"
 getInfo ">> Building kernel . . . . <<"
