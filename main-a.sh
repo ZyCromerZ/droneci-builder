@@ -78,7 +78,7 @@ if [ ! -z "$1" ] && [ "$1" == 'initial' ];then
     GetCBD=$(date +"%Y-%m-%d")
     TotalCores=$(nproc --all)
     TypeBuildTag="AOSP-CFW"
-    FullLto="YES"
+    FullLto="NO"
     export KBUILD_BUILD_USER="ZyCromerZ"
     export KBUILD_BUILD_HOST="DroneCI-server"
     export KBUILD_BUILD_VERSION=$DRONE_BUILD_NUMBER
