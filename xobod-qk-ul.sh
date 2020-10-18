@@ -2,7 +2,7 @@
 branch="20200911/qk-ul"
 . main-b.sh 'initial'
 
-spectrumFile="none"
+spectrumFile="ul.rc"
 TypeBuild="Stable-TEST"
 TypeBuildTag="AOSP"
 getInfo ">> Building kernel . . . . <<"
