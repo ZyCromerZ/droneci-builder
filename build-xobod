@@ -20,15 +20,17 @@ function make_changes() {
     git checkout $1 && update_file 'main.sh' "$1.sh" './.drone.yml'
 }
 
-for Files in xobod-main xobod-qk-n xobod-tercydux-a
+for Files in xobod-qk-ul xobod-qk-l xobod-qk-n xobod-tercydux-a
 do
     git branch -D $Files$TAGS
     make_changes $Files$TAGS
 done
 
 git push -f origin \
-xobod-main$TAGS \
+xobod-qk-ul$TAGS \
+xobod-qk-l$TAGS \
 xobod-qk-n$TAGS \
 xobod-tercydux-a$TAGS
+# xobod-main$TAGS \
 
 git checkout master
