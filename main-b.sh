@@ -231,15 +231,15 @@ CompileKernel(){
         fi
         # RealZipName="[$GetBD]$KVer-$HeadCommitId.zip"
         RealZipName="$ZipName"
-        if [ ! -z "$1" ];then
-            MakeZip "$1"
+        if [ ! -z "$2" ];then
+            MakeZip "$2"
         else
             MakeZip
         fi
     else
         MSG="<b>❌ Build failed</b>%0A- <code>$((DIFF / 60)) minute(s) $((DIFF % 60)) second(s)</code>%0A%0ASad Boy"
-        if [ ! -z "$1" ];then
-            tg_send_info "$MSG" "$1"
+        if [ ! -z "$2" ];then
+            tg_send_info "$MSG" "$2"
         else
             tg_send_info "$MSG" 
         fi
