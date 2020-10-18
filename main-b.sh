@@ -75,6 +75,9 @@ if [ ! -z "$1" ] && [ "$1" == 'initial' ];then
     TypeBuildTag="AOSP"
     KernelFor='Q'
     SendInfo='belum'
+    RefreshRate="60"
+    SetTag="LA.UM.8.2.r1"
+    SetLastTag="sdm660.0"
     export KBUILD_BUILD_USER="ZyCromerZ"
     export KBUILD_BUILD_HOST="DroneCI-server"
     export KBUILD_BUILD_VERSION=$DRONE_BUILD_NUMBER
@@ -182,6 +185,20 @@ CompileKernel(){
         fi
         SendInfo='sudah'
     fi
+    if [ ! -z "$1" ] && [ $1 != "60" ];then
+        git reset --hard $HeadCommitId
+        update_file "qcom,mdss-dsi-panel-framerate = " "qcom,mdss-dsi-panel-framerate = <$GetRefreshRate>;" "./arch/arm/boot/dts/qcom/X01BD/dsi-panel-hx83112a-1080p-video-tm.dtsi" && \
+        update_file "qcom,mdss-dsi-panel-framerate = " "qcom,mdss-dsi-panel-framerate = <$GetRefreshRate>;" "./arch/arm/boot/dts/qcom/X01BD/dsi-panel-nt36672ah-1080p-video-kd.dtsi"
+        RefreshRate="$1"
+    fi
+    GetKernelName="$(cat "./arch/$ARCH/configs/$DEFFCONFIG" | grep "CONFIG_LOCALVERSION=" | sed 's/"//g' | sed 's/CONFIG_LOCALVERSION=//g')"
+    KernelName='"'$GetKernelName'-'$RefreshRate'"'
+    update_file "CONFIG_LOCALVERSION=" "CONFIG_LOCALVERSION=$KernelName" "./arch/$ARCH/configs/$DEFFCONFIG"
+    LastHeadCommitId=$(git log --pretty=format:'%h' -n1)
+    TAGKENEL="$(git log | grep "${SetTag}" | head -n 1 | awk -F '\\'${SetLastTag}'' '{print $1"'${SetLastTag}'"}' | awk -F '\\'${SetTag}'' '{print "'${SetTag}'"$2}')"
+    if [ ! -z "$TAGKENEL" ];then
+        export KBUILD_BUILD_HOST="DroneCI-server-$TAGKENEL"
+    fi
     make -j${TotalCores}  O=out ARCH="$ARCH" "$DEFFCONFIG"
     make -j${TotalCores}  O=out \
         ARCH=$ARCH \
@@ -208,9 +225,9 @@ CompileKernel(){
         cp -af $kernelDir/out/arch/$ARCH/boot/Image.gz-dtb $AnykernelDir
         KName=$(cat "$(pwd)/arch/$ARCH/configs/$DEFFCONFIG" | grep "CONFIG_LOCALVERSION=" | sed 's/CONFIG_LOCALVERSION="-*//g' | sed 's/"*//g' )
         if [ $TypeBuild == "Stable" ];then
-            ZipName="[$KernelFor][$GetBD][$TypeBuildTag][$CODENAME]$KVer-$KName-$HeadCommitId.zip"
+            ZipName="[${RefreshRate}Hz][$KernelFor][$GetBD][$CODENAME]$KVer-$KName-$LastHeadCommitId.zip"
         else
-            ZipName="[$KernelFor][$GetBD][$TypeBuildTag][$TypeBuild][$CODENAME]$KVer-$KName-$HeadCommitId.zip"
+            ZipName="[${RefreshRate}Hz][$KernelFor][$GetBD][$TypeBuild][$CODENAME]$KVer-$KName-$LastHeadCommitId.zip"
         fi
         # RealZipName="[$GetBD]$KVer-$HeadCommitId.zip"
         RealZipName="$ZipName"
@@ -256,6 +273,20 @@ FixPieWifi()
     HeadCommitMsg=$(git log --pretty=format:'%s' -n1)
     KernelFor='P'
     cd $mainDir
+}
+
+update_file() {
+    if [ ! -z "$1" ] && [ ! -z "$2" ] && [ ! -z "$3" ];then
+        GetValue="$(cat $3 | grep "$1")"
+        GetPath=${3/"."/""}
+        ValOri="$(echo "$GetValue" | awk -F '\\=' '{print $2}')"
+        UpdateTo="$(echo "$2" | awk -F '\\=' '{print $2}')"
+        [ "$ValOri" != "$UpdateTo" ] && \
+        sed -i "s/$1.*/$2/g" "$3"
+        [ ! -z "$(git status | grep "modified" )" ] && \
+        git add "$3" && \
+        git commit -s -m "$GetPath: '$GetValue' update to '$2'"
+    fi
 }
 
 getInfo 'include main.sh success'
