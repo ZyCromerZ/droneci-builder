@@ -53,9 +53,9 @@ if [ ! -z "$1" ] && [ "$1" == 'initial' ];then
     getInfo ">> cloning clang . . . <<"
     git clone https://github.com/NusantaraDevs/DragonTC -b 10.0 $clangDir --depth=1
     getInfo ">> cloning gcc64 . . . <<"
-    git clone https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9/ -b android-10.0.0_r45 $gcc64Dir --depth=1
+    git clone https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9/ -b android-10.0.0_r47 $gcc64Dir --depth=1
     getInfo ">> cloning gcc32 . . . <<"
-    git clone https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9/ -b android-10.0.0_r45 $gcc32Dir --depth=1
+    git clone https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9/ -b android-10.0.0_r47 $gcc32Dir --depth=1
     getInfo ">> cloning Anykernel . . . <<"
     git clone https://github.com/ZyCromerZ/AnyKernel3 -b master $AnykernelDir --depth=1
     getInfo ">> cloning Spectrum . . . <<"
@@ -185,14 +185,14 @@ CompileKernel(){
         fi
         SendInfo='sudah'
     fi
+    git reset --hard $HeadCommitId
     if [ ! -z "$1" ] && [ $1 != "60" ];then
-        git reset --hard $HeadCommitId
         update_file "qcom,mdss-dsi-panel-framerate = " "qcom,mdss-dsi-panel-framerate = <$GetRefreshRate>;" "./arch/arm/boot/dts/qcom/X01BD/dsi-panel-hx83112a-1080p-video-tm.dtsi" && \
         update_file "qcom,mdss-dsi-panel-framerate = " "qcom,mdss-dsi-panel-framerate = <$GetRefreshRate>;" "./arch/arm/boot/dts/qcom/X01BD/dsi-panel-nt36672ah-1080p-video-kd.dtsi"
         RefreshRate="$1"
     fi
     GetKernelName="$(cat "./arch/$ARCH/configs/$DEFFCONFIG" | grep "CONFIG_LOCALVERSION=" | sed 's/"//g' | sed 's/CONFIG_LOCALVERSION=//g')"
-    KernelName='"'$GetKernelName'-'$RefreshRate'"'
+    KernelName='"'$GetKernelName'-'$RefreshRate'Hz"'
     update_file "CONFIG_LOCALVERSION=" "CONFIG_LOCALVERSION=$KernelName" "./arch/$ARCH/configs/$DEFFCONFIG"
     LastHeadCommitId=$(git log --pretty=format:'%h' -n1)
     TAGKENEL="$(git log | grep "${SetTag}" | head -n 1 | awk -F '\\'${SetLastTag}'' '{print $1"'${SetLastTag}'"}' | awk -F '\\'${SetTag}'' '{print "'${SetTag}'"$2}')"
@@ -225,9 +225,9 @@ CompileKernel(){
         cp -af $kernelDir/out/arch/$ARCH/boot/Image.gz-dtb $AnykernelDir
         KName=$(cat "$(pwd)/arch/$ARCH/configs/$DEFFCONFIG" | grep "CONFIG_LOCALVERSION=" | sed 's/CONFIG_LOCALVERSION="-*//g' | sed 's/"*//g' )
         if [ $TypeBuild == "Stable" ];then
-            ZipName="[${RefreshRate}Hz][$KernelFor][$GetBD][$CODENAME]$KVer-$KName-$LastHeadCommitId.zip"
+            ZipName="[DTC][$GetBD][${RefreshRate}Hz][$KernelFor][$CODENAME]$KVer-$KName-$LastHeadCommitId.zip"
         else
-            ZipName="[${RefreshRate}Hz][$KernelFor][$GetBD][$TypeBuild][$CODENAME]$KVer-$KName-$LastHeadCommitId.zip"
+            ZipName="[DTC][$GetBD][${RefreshRate}Hz][$KernelFor][$TypeBuild][$CODENAME]$KVer-$KName-$LastHeadCommitId.zip"
         fi
         # RealZipName="[$GetBD]$KVer-$HeadCommitId.zip"
         RealZipName="$ZipName"
@@ -246,6 +246,75 @@ CompileKernel(){
         exit -1
     fi
 }
+
+CompileKernelGcc(){
+    cd $kernelDir
+    export KBUILD_COMPILER_STRING
+    MAKE+=(
+            ARCH=$ARCH \
+            SUBARCH=$ARCH \
+            CROSS_COMPILE=aarch64-linux-android- \
+            CROSS_COMPILE_ARM32=arm-linux-androideabi- \
+    )
+    rm -rf out # always remove out directory :V
+    BUILD_START=$(date +"%s")
+    if [ "$SendInfo" != 'sudah' ];then
+        MSG="<b>🔨 New Kernel On The Way</b>%0A<b>Device: $DEVICE</b>%0A<b>Codename: $CODENAME</b>%0A<b>Branch: $branch</b>%0A<b>Build Date: $GetCBD </b>%0A<b>Build Number: $DRONE_BUILD_NUMBER </b>%0A<b>Build Link Progress:</b><a href='https://cloud.drone.io/ZyCromerZ/droneci-builder/$DRONE_BUILD_NUMBER/1/2'> Check Here </a>%0A<b>Host Core Count : $TotalCores cores </b>%0A<b>Kernel Version: $KVer</b>%0A<b>Last Commit-Id: $HeadCommitId </b>%0A<b>Last Commit-Message: $HeadCommitMsg </b>%0A<b>Builder Info: </b>%0A<code>xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx</code>%0A<code>- $ClangType </code>%0A<code>- $gcc64Type </code>%0A<code>- $gcc32Type </code>%0A<code>xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx</code>%0A%0A #$TypeBuildTag  #$TypeBuild"
+        if [ ! -z "$1" ];then
+            tg_send_info "$MSG" "$1"
+        else
+            tg_send_info "$MSG" 
+        fi
+        SendInfo='sudah'
+    fi
+    git reset --hard $HeadCommitId
+    if [ ! -z "$1" ] && [ $1 != "60" ];then
+        update_file "qcom,mdss-dsi-panel-framerate = " "qcom,mdss-dsi-panel-framerate = <$GetRefreshRate>;" "./arch/arm/boot/dts/qcom/X01BD/dsi-panel-hx83112a-1080p-video-tm.dtsi" && \
+        update_file "qcom,mdss-dsi-panel-framerate = " "qcom,mdss-dsi-panel-framerate = <$GetRefreshRate>;" "./arch/arm/boot/dts/qcom/X01BD/dsi-panel-nt36672ah-1080p-video-kd.dtsi"
+        RefreshRate="$1"
+    fi
+    GetKernelName="$(cat "./arch/$ARCH/configs/$DEFFCONFIG" | grep "CONFIG_LOCALVERSION=" | sed 's/"//g' | sed 's/CONFIG_LOCALVERSION=//g')"
+    KernelName='"'$GetKernelName'-'$RefreshRate'Hz"'
+    update_file "CONFIG_LOCALVERSION=" "CONFIG_LOCALVERSION=$KernelName" "./arch/$ARCH/configs/$DEFFCONFIG"
+    LastHeadCommitId=$(git log --pretty=format:'%h' -n1)
+    TAGKENEL="$(git log | grep "${SetTag}" | head -n 1 | awk -F '\\'${SetLastTag}'' '{print $1"'${SetLastTag}'"}' | awk -F '\\'${SetTag}'' '{print "'${SetTag}'"$2}')"
+    if [ ! -z "$TAGKENEL" ];then
+        export KBUILD_BUILD_HOST="DroneCI-server-$TAGKENEL"
+    fi
+    make -j${TotalCores}  O=out ARCH="$ARCH" "$DEFFCONFIG"
+    make -j${TotalCores}  O=out \
+        ARCH=$ARCH \
+        SUBARCH=$ARCH \
+        CROSS_COMPILE=aarch64-linux-android- \
+        CROSS_COMPILE_ARM32=arm-linux-androideabi- \
+    BUILD_END=$(date +"%s")
+    DIFF=$((BUILD_END - BUILD_START))
+    if [ -f $kernelDir/out/arch/$ARCH/boot/Image.gz-dtb ];then
+        cp -af $kernelDir/out/arch/$ARCH/boot/Image.gz-dtb $AnykernelDir
+        KName=$(cat "$(pwd)/arch/$ARCH/configs/$DEFFCONFIG" | grep "CONFIG_LOCALVERSION=" | sed 's/CONFIG_LOCALVERSION="-*//g' | sed 's/"*//g' )
+        if [ $TypeBuild == "Stable" ];then
+            ZipName="[GCC][$GetBD][${RefreshRate}Hz][$KernelFor][$CODENAME]$KVer-$KName-$LastHeadCommitId.zip"
+        else
+            ZipName="[GCC][$GetBD][${RefreshRate}Hz][$KernelFor][$TypeBuild][$CODENAME]$KVer-$KName-$LastHeadCommitId.zip"
+        fi
+        # RealZipName="[$GetBD]$KVer-$HeadCommitId.zip"
+        RealZipName="$ZipName"
+        if [ ! -z "$2" ];then
+            MakeZip "$2"
+        else
+            MakeZip
+        fi
+    else
+        MSG="<b>❌ Build failed</b>%0A- <code>$((DIFF / 60)) minute(s) $((DIFF % 60)) second(s)</code>%0A%0ASad Boy"
+        if [ ! -z "$2" ];then
+            tg_send_info "$MSG" "$2"
+        else
+            tg_send_info "$MSG" 
+        fi
+        exit -1
+    fi
+}
+
 
 MakeZip(){
     cd $AnykernelDir
