@@ -142,11 +142,11 @@ tg_send_files(){
     . run.sh "$KernelFiles" "x01bd" "$(date +"%m-%d-%Y")" "$GetKernelName"
     cd $currentFolder
 
-    if [ ! -z "$1" ];then
-        tg_send_info "$MSG" "$1"
-    else
-        tg_send_info "$MSG"
-    fi
+    # if [ ! -z "$1" ];then
+    #     tg_send_info "$MSG" "$1"
+    # else
+    #     tg_send_info "$MSG"
+    # fi
     # remove files after build done
     rm -rf $KernelFiles
 }
