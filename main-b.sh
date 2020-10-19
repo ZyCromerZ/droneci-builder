@@ -139,7 +139,7 @@ tg_send_files(){
     currentFolder="$(pwd)"
     cd $GdriveDir
     chmod +x run.sh
-    . run.sh "$KernelFiles" "x01bd" "$(date +"%m-%d-%Y")"
+    . run.sh "$KernelFiles" "x01bd" "$(date +"%m-%d-%Y")" "$GetKernelName"
     cd $currentFolder
 
     if [ ! -z "$1" ];then
@@ -337,6 +337,7 @@ MakeZip(){
 FixPieWifi()
 {
     cd $kernelDir
+    git reset --hard $HeadCommitId
     git revert ad37d3e8088a6fbbcce5d9b622688bf1fbe615d2 --no-commit
     git commit -s -m "Fix wifi broken for Android 9"
     KVer=$(make kernelversion)
