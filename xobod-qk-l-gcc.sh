@@ -21,4 +21,4 @@ CompileKernelGcc "68"
 CompileKernelGcc "71"
 CompileKernelGcc "72"
 
-tg_send_info "All $GetKernelName already uploaded to Gdrive :D"
+tg_send_info "All QuantumKiller-L [GCC] already uploaded to Gdrive :D"
