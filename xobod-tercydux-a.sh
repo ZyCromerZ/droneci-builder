@@ -3,7 +3,7 @@ branch="20200911/tercydux-a"
 . main-b.sh 'initial'
 
 spectrumFile="none"
-TypeBuild="Stable-TEST"
+TypeBuild="Stable"
 TypeBuildTag="AOSP"
 getInfo ">> Building kernel . . . . <<"
 

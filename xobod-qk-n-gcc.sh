@@ -3,7 +3,7 @@ branch="20200911/qk-n"
 . main-b.sh 'initial'
 
 spectrumFile="vipn.rc"
-TypeBuild="Stable-TEST"
+TypeBuild="Stable"
 TypeBuildTag="AOSP"
 getInfo ">> Building kernel . . . . <<"
 
