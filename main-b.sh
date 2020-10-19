@@ -53,9 +53,9 @@ if [ ! -z "$1" ] && [ "$1" == 'initial' ];then
     getInfo ">> cloning clang . . . <<"
     git clone https://github.com/NusantaraDevs/DragonTC -b 10.0 $clangDir --depth=1
     getInfo ">> cloning gcc64 . . . <<"
-    git clone https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9/ -b android-10.0.0_r47 $gcc64Dir --depth=1
+    git clone https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9/ -b android-10.0.0_r47 $gcc64Dir --depth=1
     getInfo ">> cloning gcc32 . . . <<"
-    git clone https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9/ -b android-10.0.0_r47 $gcc32Dir --depth=1
+    git clone https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9/ -b android-10.0.0_r47 $gcc32Dir --depth=1
     getInfo ">> cloning Anykernel . . . <<"
     git clone https://github.com/ZyCromerZ/AnyKernel3 -b master $AnykernelDir --depth=1
     getInfo ">> cloning Spectrum . . . <<"
