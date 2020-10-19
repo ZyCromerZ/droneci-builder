@@ -102,6 +102,7 @@ if [ ! -z "$1" ] && [ "$1" == 'initial' ];then
     KVer=$(make kernelversion)
     HeadCommitId=$(git log --pretty=format:'%h' -n1)
     HeadCommitMsg=$(git log --pretty=format:'%s' -n1)
+    GetKernelName="$(cat "./arch/$ARCH/configs/$DEFFCONFIG" | grep "CONFIG_LOCALVERSION=" | sed 's/"//g' | sed 's/CONFIG_LOCALVERSION=//g')"
     cd $mainDir
 fi
 
@@ -140,7 +141,7 @@ tg_send_files(){
     currentFolder="$(pwd)"
     cd $GdriveDir
     chmod +x run.sh
-    . run.sh "$KernelFiles" "begonia" "$(date +"%m-%d-%Y")"
+    . run.sh "$KernelFiles" "begonia" "$(date +"%m-%d-%Y")" "$GetKernelName"
     cd $currentFolder
 
     if [ ! -z "$1" ];then
