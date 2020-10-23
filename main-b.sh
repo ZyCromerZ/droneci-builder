@@ -76,8 +76,8 @@ if [ ! -z "$1" ] && [ "$1" == 'initial' ];then
     KernelFor='Q'
     SendInfo='belum'
     RefreshRate="60"
-    SetTag="LA.UM.8.2.r1"
-    SetLastTag="sdm660.0"
+    SetTag="LA.UM.9.2.r1"#LA.UM.8.2.r1
+    SetLastTag="SDMxx0.0"#sdm660.0
     export KBUILD_BUILD_USER="ZyCromerZ"
     export KBUILD_BUILD_HOST="DroneCI-server"
     export KBUILD_BUILD_VERSION=$DRONE_BUILD_NUMBER
