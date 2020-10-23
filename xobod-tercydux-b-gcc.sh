@@ -1,8 +1,8 @@
 #! /bin/bash
-branch="20200911/tercydux-a"
+branch="20200911/tercydux-b"
 . main-b.sh 'initial'
 
-spectrumFile="f.rc"
+spectrumFile="vipn.rc"
 TypeBuild="Stable"
 TypeBuildTag="AOSP"
 getInfo ">> Building kernel . . . . <<"
@@ -21,4 +21,4 @@ CompileKernelGcc "68"
 CompileKernelGcc "71"
 CompileKernelGcc "72"
 
-tg_send_info "All DeathFlower-Mona [GCC] already uploaded to Gdrive :D"
+tg_send_info "All DeathFlower-Fischl [GCC] already uploaded to Gdrive :D"
