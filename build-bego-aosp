@@ -24,9 +24,8 @@ for Files in bego-aosp-private-a bego-aosp-private-b bego-aosp-private-c bego-ao
 do
     git branch -D $Files$TAGS
     make_changes $Files$TAGS
+    git push -f origin $Files$TAGS
+    git checkout master
 done
-
-git push -f origin \
-bego-aosp-private-a$TAGS bego-aosp-private-b$TAGS bego-aosp-private-c$TAGS bego-aosp-qk-n$TAGS bego-aosp-qk-l$TAGS bego-aosp-tercydux$TAGS bego-aosp-tercydux-oc$TAGS
 
 git checkout master
