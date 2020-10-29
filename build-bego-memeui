@@ -20,13 +20,13 @@ function make_changes() {
     git checkout $1 && update_file 'main.sh' "$1.sh" './.drone.yml'
 }
 
+ListBranch=""
 for Files in bego-memeui-private bego-memeui-qk-n bego-memeui-qk-l bego-memeui-tercydux bego-memeui-tercydux-oc
 do
     git branch -D $Files$TAGS
     make_changes $Files$TAGS
+    ListBranch="$ListBranch $Files$TAGS"
+    git checkout master
 done
 
-git push -f origin \
-bego-memeui-private$TAGS bego-memeui-qk-n$TAGS bego-memeui-qk-l$TAGS bego-memeui-tercydux$TAGS bego-memeui-tercydux-oc$TAGS
-
-git checkout master
+git push -f origin $ListBranch
