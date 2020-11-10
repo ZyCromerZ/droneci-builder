@@ -1,9 +1,9 @@
 #! /bin/bash
-branch="20200907/root-upstream-mod"
+branch="20201110/main"
 . main.sh 'initial'
 
 spectrumFile="bego-on.rc"
-TypeBuild="STOCK"
+TypeBuild="TEST-rebased"
 TypeBuildTag="AOSP-CFW"
 getInfo ">> Building kernel . . . . <<"
 
