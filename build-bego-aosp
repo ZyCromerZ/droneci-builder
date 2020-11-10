@@ -21,7 +21,7 @@ function make_changes() {
 }
 
 ListBranch=""
-for Files in bego-aosp-private-a bego-aosp-private-b bego-aosp-private-c bego-aosp-private-d bego-aosp-private-e bego-aosp-qk-n bego-aosp-qk-l bego-aosp-tercydux bego-aosp-tercydux-oc bego-aosp-tercydux-a bego-aosp-tercydux-b
+for Files in bego-aosp-qk-n bego-aosp-qk-l bego-aosp-tercydux bego-aosp-tercydux-oc bego-aosp-tercydux-a
 do
     git branch -D $Files$TAGS
     make_changes $Files$TAGS
@@ -29,4 +29,4 @@ do
     git checkout master
 done
 
-git push -f origin $ListBranch
+git push -f neet $ListBranch

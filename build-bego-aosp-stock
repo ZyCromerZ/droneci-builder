@@ -29,6 +29,6 @@ do
     git checkout master
 done
 
-git push -f origin $ListBranch
+git push -f neet $ListBranch
 
 git checkout master
