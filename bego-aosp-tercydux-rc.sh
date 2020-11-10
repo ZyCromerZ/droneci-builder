@@ -1,5 +1,5 @@
 #! /bin/bash
-branch="20200907/Tercydux-rc"
+branch="20201110/Tercydux-rc"
 . main.sh 'initial'
 
 spectrumFile="bego-on.rc"

@@ -1,5 +1,5 @@
 #! /bin/bash
-branch="20200907/DeathFlower-c-rc"
+branch="20201110/DeathFlower-c-rc"
 . main.sh 'initial'
 
 spectrumFile="bego-on-p.rc"
