@@ -21,7 +21,7 @@ function make_changes() {
 }
 
 ListBranch=""
-for Files in bego-aosp-qk-n bego-aosp-qk-l bego-aosp-tercydux bego-aosp-tercydux-oc bego-aosp-tercydux-a
+for Files in bego-aosp-qk-n bego-aosp-qk-l bego-aosp-tercydux bego-aosp-tercydux-oc bego-aosp-tercydux-a bego-aosp-private-a bego-aosp-private-c
 do
     git branch -D $Files$TAGS
     make_changes $Files$TAGS
