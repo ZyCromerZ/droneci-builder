@@ -6,6 +6,7 @@ spectrumFile="ul.rc"
 TypeBuild="Stable"
 TypeBuildTag="AOSP"
 getInfo ">> Building kernel . . . . <<"
+FolderUp="QK-uL"
 
 CompileKernelGcc
 CompileKernelGcc "65"

@@ -6,6 +6,7 @@ spectrumFile="vipn.rc"
 TypeBuild="Stable"
 TypeBuildTag="AOSP"
 getInfo ">> Building kernel . . . . <<"
+FolderUp="Tercy-B"
 
 CompileKernelGcc
 CompileKernelGcc "65"

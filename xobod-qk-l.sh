@@ -6,6 +6,7 @@ spectrumFile="vipn.rc"
 TypeBuild="Stable"
 TypeBuildTag="AOSP"
 getInfo ">> Building kernel . . . . <<"
+FolderUp="QK-L"
 
 CompileKernel
 CompileKernel "65"

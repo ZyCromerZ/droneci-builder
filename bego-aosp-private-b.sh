@@ -7,5 +7,6 @@ TypeBuild="Stable"
 TypeBuildTag="AOSP-CFW"
 getInfo ">> Building kernel . . . . <<"
 KBUILD_COMPILER_STRING="Inazuma Clang 9.0.4"
+FolderUp="DF"
 
 CompileKernel

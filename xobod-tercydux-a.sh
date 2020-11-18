@@ -6,6 +6,7 @@ spectrumFile="f.rc"
 TypeBuild="Stable"
 TypeBuildTag="AOSP"
 getInfo ">> Building kernel . . . . <<"
+FolderUp="Tercy-A"
 
 CompileKernel
 CompileKernel "65"
