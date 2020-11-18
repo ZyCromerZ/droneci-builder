@@ -79,6 +79,7 @@ if [ ! -z "$1" ] && [ "$1" == 'initial' ];then
     TotalCores=$(nproc --all)
     TypeBuildTag="AOSP-CFW"
     FullLto="Nope"
+    FolderUp=""
     export KBUILD_BUILD_USER="ZyCromerZ"
     export KBUILD_BUILD_HOST="DroneCI-server"
     export KBUILD_BUILD_VERSION=$DRONE_BUILD_NUMBER
@@ -141,7 +142,7 @@ tg_send_files(){
     currentFolder="$(pwd)"
     cd $GdriveDir
     chmod +x run.sh
-    . run.sh "$KernelFiles" "begonia" "$(date +"%m-%d-%Y")" "$GetKernelName"
+    . run.sh "$KernelFiles" "begonia" "$(date +"%m-%d-%Y")" "$FolderUp"
     cd $currentFolder
 
     if [ ! -z "$1" ];then

@@ -78,6 +78,7 @@ if [ ! -z "$1" ] && [ "$1" == 'initial' ];then
     RefreshRate="60"
     SetTag="LA.UM.9.2.r1"#LA.UM.8.2.r1
     SetLastTag="SDMxx0.0"#sdm660.0
+    FolderUp=""
     export KBUILD_BUILD_USER="ZyCromerZ"
     export KBUILD_BUILD_HOST="DroneCI-server"
     export KBUILD_BUILD_VERSION=$DRONE_BUILD_NUMBER
@@ -139,7 +140,7 @@ tg_send_files(){
     currentFolder="$(pwd)"
     cd $GdriveDir
     chmod +x run.sh
-    . run.sh "$KernelFiles" "x01bd" "$(date +"%m-%d-%Y")" "$GetKernelName"
+    . run.sh "$KernelFiles" "x01bd" "$(date +"%m-%d-%Y")" "$FolderUp"
     cd $currentFolder
 
     # if [ ! -z "$1" ];then
