@@ -1,5 +1,5 @@
 #! /bin/bash
-branch="20200911/tercydux-b"
+branch="20201121/df-fischl"
 . main-b.sh 'initial'
 
 spectrumFile="vipn.rc"

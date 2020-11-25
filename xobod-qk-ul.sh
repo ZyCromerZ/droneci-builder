@@ -1,5 +1,5 @@
 #! /bin/bash
-branch="20200911/qk-ul"
+branch="20201121/qk-ul"
 . main-b.sh 'initial'
 
 spectrumFile="ul.rc"

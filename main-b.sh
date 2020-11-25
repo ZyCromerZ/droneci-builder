@@ -339,7 +339,7 @@ FixPieWifi()
 {
     cd $kernelDir
     git reset --hard origin/$branch
-    git revert ad37d3e8088a6fbbcce5d9b622688bf1fbe615d2 --no-commit
+    git revert 3026441072c32cc615f48f1b96b81b0ca1335b96 --no-commit
     git commit -s -m "Fix wifi broken for Android 9"
     KVer=$(make kernelversion)
     HeadCommitId=$(git log --pretty=format:'%h' -n1)

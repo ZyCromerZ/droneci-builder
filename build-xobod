@@ -21,7 +21,7 @@ function make_changes() {
 }
 
 ListBranch=""
-for Files in xobod-qk-ul xobod-qk-l xobod-qk-n xobod-tercydux-a xobod-tercydux-b xobod-qk-ul-gcc xobod-qk-l-gcc xobod-qk-n-gcc xobod-tercydux-a-gcc xobod-tercydux-b-gcc
+for Files in xobod-df-keqing xobod-df-keqing-gcc xobod-df-mona xobod-df-mona-gcc xobod-df-fischl xobod-df-fischl-gcc xobod-qk-l xobod-qk-l-gcc xobod-qk-n xobod-qk-n-gcc xobod-qk-ul xobod-qk-ul-gcc
 do
     git branch -D $Files$TAGS
     make_changes $Files$TAGS

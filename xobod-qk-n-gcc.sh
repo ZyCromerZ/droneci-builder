@@ -1,5 +1,5 @@
 #! /bin/bash
-branch="20200911/qk-n"
+branch="20201121/qk-n"
 . main-b.sh 'initial'
 
 spectrumFile="vipn.rc"

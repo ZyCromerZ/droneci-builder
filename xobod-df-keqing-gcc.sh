@@ -1,12 +1,12 @@
 #! /bin/bash
-branch="20201121/qk-ul"
+branch="20201121/df-keqing"
 . main-b.sh 'initial'
 
-spectrumFile="ul.rc"
+spectrumFile="f.rc"
 TypeBuild="Stable"
 TypeBuildTag="AOSP"
 getInfo ">> Building kernel . . . . <<"
-FolderUp="QK-uL"
+FolderUp="Tercy-A"
 
 CompileKernelGcc
 CompileKernelGcc "65"
@@ -22,4 +22,4 @@ CompileKernelGcc "68"
 CompileKernelGcc "71"
 CompileKernelGcc "72"
 
-tg_send_info "All QuantumKiller-uL [GCC] already uploaded to Gdrive :D"
+tg_send_info "All DeathFlower-Keqing [GCC] already uploaded to Gdrive :D"
