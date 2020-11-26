@@ -1,12 +1,12 @@
 #! /bin/bash
-branch="20201110/DeathFlower-b-rc"
+branch="20201110/df-mona"
 . main.sh 'initial'
 
 spectrumFile="bego-on-p.rc"
-TypeBuild="Stable-RC"
+TypeBuild="Personal-Stable"
 TypeBuildTag="AOSP-CFW"
 getInfo ">> Building kernel . . . . <<"
-KBUILD_COMPILER_STRING="Inazuma Clang 9.0.4"
+# KBUILD_COMPILER_STRING="Mondstadt Clang 9.0.4"
 FolderUp="DF"
 
-CompileKernel
+CompileKernelGcc

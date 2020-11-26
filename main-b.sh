@@ -47,15 +47,18 @@ SpectrumDir=$mainDir/Spectrum
 
 GdriveDir=$mainDir/Gdrive-Uploader
 
+apt-get -y update && apt-get -y upgrade && apt-get -y install tzdata git automake lzop bison gperf build-essential zip curl zlib1g-dev g++-multilib libxml2-utils bzip2 libbz2-dev libbz2-1.0 libghc-bzlib-dev squashfs-tools pngcrush schedtool dpkg-dev liblz4-tool make optipng bc libstdc++6 wget python3 python3-pip python gcc clang libssl-dev rsync flex git-lfs libz3-dev libz3-4 axel tar && python3 -m pip  install networkx
+
 if [ ! -z "$1" ] && [ "$1" == 'initial' ];then
+
     getInfo ">> cloning kernel . . . <<"
     git clone https://$GIT_SECRET@github.com/ZyCromerZ/X01BD_kernel -b "$branch" $kernelDir 
     getInfo ">> cloning clang . . . <<"
     git clone https://github.com/NusantaraDevs/DragonTC -b 10.0 $clangDir --depth=1
     getInfo ">> cloning gcc64 . . . <<"
-    git clone https://github.com/ZyCromerZ/aarch64-linux-android-4.9/ -b android-10.0.0_r47 $gcc64Dir --depth=1
+    git clone https://github.com/theradcolor/aarch64-linux-gnu -b stable-gcc $gcc64Dir --depth=1
     getInfo ">> cloning gcc32 . . . <<"
-    git clone https://github.com/ZyCromerZ/arm-linux-androideabi-4.9/ -b android-10.0.0_r47 $gcc32Dir --depth=1
+    git clone https://github.com/theradcolor/arm-linux-gnueabi.git -b stable-gcc $gcc32Dir --depth=1
     getInfo ">> cloning Anykernel . . . <<"
     git clone https://github.com/ZyCromerZ/AnyKernel3 -b master $AnykernelDir --depth=1
     getInfo ">> cloning Spectrum . . . <<"
@@ -84,15 +87,15 @@ if [ ! -z "$1" ] && [ "$1" == 'initial' ];then
     export KBUILD_BUILD_VERSION=$DRONE_BUILD_NUMBER
     ClangType="$($clangDir/bin/clang --version | head -n 1)"
     KBUILD_COMPILER_STRING="$ClangType"
-    if [ -e $gcc64Dir/bin/aarch64-linux-android-gcc ];then
-        gcc64Type="$($gcc64Dir/bin/aarch64-linux-android-gcc --version | head -n 1)"
+    if [ -e $gcc64Dir/bin/aarch64-linux-gnu-gcc ];then
+        gcc64Type="$($gcc64Dir/bin/aarch64-linux-gnu-gcc --version | head -n 1)"
     else
         cd $gcc64Dir
         gcc64Type=$(git log --pretty=format:'%h: %s' -n1)
         cd $mainDir
     fi
-    if [ -e $gcc32Dir/bin/arm-linux-androideabi-gcc ];then
-        gcc32Type="$($gcc32Dir/bin/arm-linux-androideabi-gcc --version | head -n 1)"
+    if [ -e $gcc32Dir/bin/arm-linux-gnueabi-gcc ];then
+        gcc32Type="$($gcc32Dir/bin/arm-linux-gnueabi-gcc --version | head -n 1)"
     else
         cd $gcc32Dir
         gcc32Type=$(git log --pretty=format:'%h: %s' -n1)
@@ -158,10 +161,10 @@ CompileKernel(){
     MAKE+=(
             ARCH=$ARCH \
             SUBARCH=$ARCH \
-            PATH=$clangDir/bin:$gcc64Dir/bin/:$gcc32Dir/bin/:/usr/bin:${PATH} \
+            PATH=$clangDir/bin:$gcc64Dir/bin:$gcc32Dir/bin:/usr/bin:${PATH} \
             CC=clang \
-            CROSS_COMPILE=aarch64-linux-android- \
-            CROSS_COMPILE_ARM32=arm-linux-androideabi- \
+            CROSS_COMPILE=aarch64-linux-gnu- \
+            CROSS_COMPILE_ARM32=arm-linux-gnueabi- \
             AR=llvm-ar \
             AS=llvm-as \
             NM=llvm-nm \
@@ -204,10 +207,10 @@ CompileKernel(){
     make -j${TotalCores}  O=out \
         ARCH=$ARCH \
         SUBARCH=$ARCH \
-        PATH=$clangDir/bin:$gcc64Dir/bin/:$gcc32Dir/bin/:/usr/bin:${PATH} \
+        PATH=$clangDir/bin:$gcc64Dir/bin:$gcc32Dir/bin:/usr/bin:${PATH} \
         CC=clang \
-        CROSS_COMPILE=aarch64-linux-android- \
-        CROSS_COMPILE_ARM32=arm-linux-androideabi- \
+        CROSS_COMPILE=aarch64-linux-gnu- \
+        CROSS_COMPILE_ARM32=arm-linux-gnueabi- \
         AR=llvm-ar \
         AS=llvm-as \
         NM=llvm-nm \
@@ -254,9 +257,9 @@ CompileKernelGcc(){
     MAKE+=(
             ARCH=$ARCH \
             SUBARCH=$ARCH \
-            PATH=$gcc64Dir/bin/:$gcc32Dir/bin/:/usr/bin:${PATH} \
-            CROSS_COMPILE=aarch64-linux-android- \
-            CROSS_COMPILE_ARM32=arm-linux-androideabi-
+            PATH=$gcc64Dir/bin:$gcc32Dir/bin:/usr/bin:${PATH} \
+            CROSS_COMPILE=aarch64-linux-gnu- \
+            CROSS_COMPILE_ARM32=arm-linux-gnueabi-
     )
     # rm -rf out # always remove out directory :V
     BUILD_START=$(date +"%s")
@@ -287,9 +290,9 @@ CompileKernelGcc(){
     make -j${TotalCores}  O=out \
         ARCH=$ARCH \
         SUBARCH=$ARCH \
-        PATH=$clangDir/bin:$gcc64Dir/bin/:$gcc32Dir/bin/:/usr/bin:${PATH} \
-        CROSS_COMPILE=aarch64-linux-android- \
-        CROSS_COMPILE_ARM32=arm-linux-androideabi-
+        PATH=$clangDir/bin:$gcc64Dir/bin:$gcc32Dir/bin:/usr/bin:${PATH} \
+        CROSS_COMPILE=aarch64-linux-gnu- \
+        CROSS_COMPILE_ARM32=arm-linux-gnueabi-
     BUILD_END=$(date +"%s")
     DIFF=$((BUILD_END - BUILD_START))
     if [ -f $kernelDir/out/arch/$ARCH/boot/Image.gz-dtb ];then
