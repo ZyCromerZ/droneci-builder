@@ -56,9 +56,9 @@ if [ ! -z "$1" ] && [ "$1" == 'initial' ];then
     getInfo ">> cloning clang . . . <<"
     git clone https://github.com/NusantaraDevs/DragonTC -b 10.0 $clangDir --depth=1
     getInfo ">> cloning gcc64 . . . <<"
-    git clone https://github.com/theradcolor/aarch64-linux-gnu -b stable-gcc $gcc64Dir --depth=1
+    git clone https://github.com/ZyCromerZ/aarch64-linux-gnu-1 -b stable-gcc $gcc64Dir --depth=1
     getInfo ">> cloning gcc32 . . . <<"
-    git clone https://github.com/theradcolor/arm-linux-gnueabi.git -b stable-gcc $gcc32Dir --depth=1
+    git clone https://github.com/ZyCromerZ/arm-linux-gnueabi -b stable-gcc $gcc32Dir --depth=1
     getInfo ">> cloning Anykernel . . . <<"
     git clone https://github.com/ZyCromerZ/AnyKernel3 -b master $AnykernelDir --depth=1
     getInfo ">> cloning Spectrum . . . <<"
@@ -79,8 +79,8 @@ if [ ! -z "$1" ] && [ "$1" == 'initial' ];then
     KernelFor='Q'
     SendInfo='belum'
     RefreshRate="60"
-    SetTag="LA.UM.9.2.r1"#LA.UM.8.2.r1
-    SetLastTag="SDMxx0.0"#sdm660.0
+    SetTag="LA.UM.8.2.r1"
+    SetLastTag="sdm660.0"
     FolderUp=""
     export KBUILD_BUILD_USER="ZyCromerZ"
     export KBUILD_BUILD_HOST="DroneCI-server"
@@ -96,6 +96,63 @@ if [ ! -z "$1" ] && [ "$1" == 'initial' ];then
     fi
     if [ -e $gcc32Dir/bin/arm-linux-gnueabi-gcc ];then
         gcc32Type="$($gcc32Dir/bin/arm-linux-gnueabi-gcc --version | head -n 1)"
+    else
+        cd $gcc32Dir
+        gcc32Type=$(git log --pretty=format:'%h: %s' -n1)
+        cd $mainDir
+    fi
+    cd $kernelDir
+    KVer=$(make kernelversion)
+    HeadCommitId=$(git log --pretty=format:'%h' -n1)
+    HeadCommitMsg=$(git log --pretty=format:'%s' -n1)
+    cd $mainDir
+fi
+
+if [ ! -z "$1" ] && [ "$1" == 'initial-gcc' ];then
+
+    getInfo ">> cloning kernel . . . <<"
+    git clone https://$GIT_SECRET@github.com/ZyCromerZ/X01BD_kernel -b "$branch" $kernelDir 
+    getInfo ">> cloning gcc64 . . . <<"
+    git clone https://github.com/ZyCromerZ/aarch64-linux-android-4.9/ -b android-10.0.0_r47 $gcc64Dir --depth=1
+    getInfo ">> cloning gcc32 . . . <<"
+    git clone https://github.com/ZyCromerZ/arm-linux-androideabi-4.9/ -b android-10.0.0_r47 $gcc32Dir --depth=1
+    getInfo ">> cloning Anykernel . . . <<"
+    git clone https://github.com/ZyCromerZ/AnyKernel3 -b master $AnykernelDir --depth=1
+    getInfo ">> cloning Spectrum . . . <<"
+    git clone https://github.com/ZyCromerZ/Spectrum -b master $SpectrumDir --depth=1
+    getInfo ">> cloning Gdrive Uploader . . . <<"
+    git clone https://$GIT_SECRET@github.com/ZyCromerZ/gdrive_uploader -b master $GdriveDir --depth=1 
+    
+    DEVICE="Asus Max Pro M2"
+    CODENAME="X01BD"
+    SaveChatID="-1001301538740"
+    ARCH="arm64"
+    TypeBuild="Stable"
+    DEFFCONFIG="X01BD_defconfig"
+    GetBD=$(date +"%m%d")
+    GetCBD=$(date +"%Y-%m-%d")
+    TotalCores=$(nproc --all)
+    TypeBuildTag="AOSP"
+    KernelFor='Q'
+    SendInfo='belum'
+    RefreshRate="60"
+    SetTag="LA.UM.8.2.r1"
+    SetLastTag="sdm660.0"
+    FolderUp=""
+    export KBUILD_BUILD_USER="ZyCromerZ"
+    export KBUILD_BUILD_HOST="DroneCI-server"
+    export KBUILD_BUILD_VERSION=$DRONE_BUILD_NUMBER
+    ClangType="$($gcc64Dir/bin/aarch64-linux-android-gcc --version | head -n 1))"
+    KBUILD_COMPILER_STRING="$ClangType"
+    if [ -e $gcc64Dir/bin/aarch64-linux-android-gcc ];then
+        gcc64Type="$($gcc64Dir/bin/aarch64-linux-android-gcc --version | head -n 1)"
+    else
+        cd $gcc64Dir
+        gcc64Type=$(git log --pretty=format:'%h: %s' -n1)
+        cd $mainDir
+    fi
+    if [ -e $gcc32Dir/bin/arm-linux-androideabi-gcc ];then
+        gcc32Type="$($gcc32Dir/bin/arm-linux-androideabi-gcc --version | head -n 1)"
     else
         cd $gcc32Dir
         gcc32Type=$(git log --pretty=format:'%h: %s' -n1)
@@ -258,8 +315,8 @@ CompileKernelGcc(){
             ARCH=$ARCH \
             SUBARCH=$ARCH \
             PATH=$gcc64Dir/bin:$gcc32Dir/bin:/usr/bin:${PATH} \
-            CROSS_COMPILE=aarch64-linux-gnu- \
-            CROSS_COMPILE_ARM32=arm-linux-gnueabi-
+            CROSS_COMPILE=aarch64-linux-android- \
+            CROSS_COMPILE_ARM32=arm-linux-androideabi-
     )
     # rm -rf out # always remove out directory :V
     BUILD_START=$(date +"%s")
@@ -291,8 +348,8 @@ CompileKernelGcc(){
         ARCH=$ARCH \
         SUBARCH=$ARCH \
         PATH=$clangDir/bin:$gcc64Dir/bin:$gcc32Dir/bin:/usr/bin:${PATH} \
-        CROSS_COMPILE=aarch64-linux-gnu- \
-        CROSS_COMPILE_ARM32=arm-linux-gnueabi-
+        CROSS_COMPILE=aarch64-linux-android- \
+        CROSS_COMPILE_ARM32=arm-linux-androideabi-
     BUILD_END=$(date +"%s")
     DIFF=$((BUILD_END - BUILD_START))
     if [ -f $kernelDir/out/arch/$ARCH/boot/Image.gz-dtb ];then

@@ -1,12 +1,12 @@
 #! /bin/bash
 branch="20201121/df-keqing"
-. main-b.sh 'initial'
+. main-b.sh 'initial-gcc'
 
 spectrumFile="f.rc"
 TypeBuild="Stable"
 TypeBuildTag="AOSP"
 getInfo ">> Building kernel . . . . <<"
-FolderUp="Tercy-A"
+FolderUp="Keqing"
 
 CompileKernelGcc
 CompileKernelGcc "65"

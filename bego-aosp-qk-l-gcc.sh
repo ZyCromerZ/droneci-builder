@@ -1,11 +1,11 @@
 #! /bin/bash
-branch="20201110/Tercydux-Tiris-rc"
-. main.sh 'initial'
+branch="20201110/qk-l"
+. main.sh 'initial-gcc'
 
 spectrumFile="bego-on.rc"
-TypeBuild="Stable-TEST-RC"
+TypeBuild="Stable"
 TypeBuildTag="AOSP-CFW"
 getInfo ">> Building kernel . . . . <<"
-FolderUp="Tercy"
+FolderUp="QK"
 
 CompileKernel

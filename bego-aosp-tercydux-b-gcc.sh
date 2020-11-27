@@ -1,9 +1,9 @@
 #! /bin/bash
-branch="20201110/Tercydux-b-rc"
-. main.sh 'initial'
+branch="20201110/Tercydux-b"
+. main.sh 'initial-gcc'
 
 spectrumFile="bego-on.rc"
-TypeBuild="Stable-TEST-RC"
+TypeBuild="Stable"
 TypeBuildTag="AOSP-CFW"
 getInfo ">> Building kernel . . . . <<"
 FolderUp="Tercy"

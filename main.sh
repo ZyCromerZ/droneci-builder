@@ -61,9 +61,9 @@ if [ ! -z "$1" ] && [ "$1" == 'initial' ];then
     getInfo ">> cloning clang . . . <<"
     git clone https://github.com/ZyCromerZ/google-clang -b 9.0.4-r353983d $clangDir --depth=1
     getInfo ">> cloning gcc64 . . . <<"
-    git clone https://github.com/theradcolor/aarch64-linux-gnu -b stable-gcc $gcc64Dir --depth=1
+    git clone https://github.com/ZyCromerZ/aarch64-linux-gnu-1 -b stable-gcc $gcc64Dir --depth=1
     getInfo ">> cloning gcc32 . . . <<"
-    git clone https://github.com/theradcolor/arm-linux-gnueabi.git -b stable-gcc $gcc32Dir --depth=1
+    git clone https://github.com/ZyCromerZ/arm-linux-gnueabi -b stable-gcc $gcc32Dir --depth=1
     getInfo ">> cloning Anykernel . . . <<"
     git clone https://github.com/ZyCromerZ/AnyKernel3 -b master-begonia $AnykernelDir --depth=1
     getInfo ">> cloning Spectrum . . . <<"
@@ -87,6 +87,65 @@ if [ ! -z "$1" ] && [ "$1" == 'initial' ];then
     export KBUILD_BUILD_HOST="DroneCI-server"
     export KBUILD_BUILD_VERSION=$DRONE_BUILD_NUMBER
     ClangType="$($clangDir/bin/clang --version | head -n 1)"
+    KBUILD_COMPILER_STRING="$ClangType"
+    if [ -e $gcc64Dir/bin/aarch64-linux-gnu-gcc ];then
+        gcc64Type="$($gcc64Dir/bin/aarch64-linux-gnu-gcc --version | head -n 1)"
+    else
+        cd $gcc64Dir
+        gcc64Type=$(git log --pretty=format:'%h: %s' -n1)
+        cd $mainDir
+    fi
+    if [ -e $gcc32Dir/bin/arm-linux-gnueabi-gcc ];then
+        gcc32Type="$($gcc32Dir/bin/arm-linux-gnueabi-gcc --version | head -n 1)"
+    else
+        cd $gcc32Dir
+        gcc32Type=$(git log --pretty=format:'%h: %s' -n1)
+        cd $mainDir
+    fi
+    cd $kernelDir
+    KVer=$(make kernelversion)
+    HeadCommitId=$(git log --pretty=format:'%h' -n1)
+    HeadCommitMsg=$(git log --pretty=format:'%s' -n1)
+    GetKernelName="$(cat "./arch/$ARCH/configs/$DEFFCONFIG" | grep "CONFIG_LOCALVERSION=" | sed 's/"//g' | sed 's/CONFIG_LOCALVERSION=//g')"
+    cd $mainDir
+fi
+
+if [ ! -z "$1" ] && [ "$1" == 'initial-gcc' ];then
+
+    if [ ! -z "$2" ] && [ "$2" == 'full' ];then
+        getInfo ">> cloning kernel full . . . <<"
+        git clone https://$GIT_SECRET@github.com/ZyCromerZ/begonia_kernel -b "$branch" $kernelDir
+    else
+        getInfo ">> cloning kernel . . . <<"
+        git clone https://$GIT_SECRET@github.com/ZyCromerZ/begonia_kernel -b "$branch" $kernelDir --depth=1 
+    fi
+    getInfo ">> cloning gcc64 . . . <<"
+    git clone https://github.com/ZyCromerZ/aarch64-linux-gnu-1 -b stable-gcc $gcc64Dir --depth=1
+    getInfo ">> cloning gcc32 . . . <<"
+    git clone https://github.com/ZyCromerZ/arm-linux-gnueabi -b stable-gcc $gcc32Dir --depth=1
+    getInfo ">> cloning Anykernel . . . <<"
+    git clone https://github.com/ZyCromerZ/AnyKernel3 -b master-begonia $AnykernelDir --depth=1
+    getInfo ">> cloning Spectrum . . . <<"
+    git clone https://github.com/ZyCromerZ/Spectrum -b master $SpectrumDir --depth=1
+    getInfo ">> cloning Gdrive Uploader . . . <<"
+    git clone https://$GIT_SECRET@github.com/ZyCromerZ/gdrive_uploader -b master $GdriveDir --depth=1 
+    
+    DEVICE="Redmi Note 8 pro"
+    CODENAME="Begonia"
+    SaveChatID="-1001301538740"
+    ARCH="arm64"
+    TypeBuild="Stable"
+    DEFFCONFIG="begonia_user_defconfig"
+    GetBD=$(date +"%m%d")
+    GetCBD=$(date +"%Y-%m-%d")
+    TotalCores=$(nproc --all)
+    TypeBuildTag="AOSP-CFW"
+    FullLto="Nope"
+    FolderUp=""
+    export KBUILD_BUILD_USER="ZyCromerZ"
+    export KBUILD_BUILD_HOST="DroneCI-server"
+    export KBUILD_BUILD_VERSION=$DRONE_BUILD_NUMBER
+    ClangType="$($gcc64Dir/bin/aarch64-linux-gnu-gcc --version | head -n 1)"
     KBUILD_COMPILER_STRING="$ClangType"
     if [ -e $gcc64Dir/bin/aarch64-linux-gnu-gcc ];then
         gcc64Type="$($gcc64Dir/bin/aarch64-linux-gnu-gcc --version | head -n 1)"
@@ -241,9 +300,9 @@ CompileKernel(){
         cp -af $kernelDir/out/arch/$ARCH/boot/Image.gz-dtb $AnykernelDir
         KName=$(cat "$(pwd)/arch/$ARCH/configs/$DEFFCONFIG" | grep "CONFIG_LOCALVERSION=" | sed 's/CONFIG_LOCALVERSION="-*//g' | sed 's/"*//g' )
         if [ $TypeBuild == "Stable" ];then
-            ZipName="[$GetBD][$TypeBuildTag][$CODENAME]$KVer-$KName-$HeadCommitId.zip"
+            ZipName="[Clang][$GetBD][$TypeBuildTag][$CODENAME]$KVer-$KName-$HeadCommitId.zip"
         else
-            ZipName="[$GetBD][$TypeBuildTag][$TypeBuild][$CODENAME]$KVer-$KName-$HeadCommitId.zip"
+            ZipName="[Clang][$GetBD][$TypeBuildTag][$TypeBuild][$CODENAME]$KVer-$KName-$HeadCommitId.zip"
         fi
         # RealZipName="[$GetBD]$KVer-$HeadCommitId.zip"
         RealZipName="$ZipName"
@@ -295,9 +354,9 @@ CompileKernelGcc(){
         cp -af $kernelDir/out/arch/$ARCH/boot/Image.gz-dtb $AnykernelDir
         KName=$(cat "$(pwd)/arch/$ARCH/configs/$DEFFCONFIG" | grep "CONFIG_LOCALVERSION=" | sed 's/CONFIG_LOCALVERSION="-*//g' | sed 's/"*//g' )
         if [ $TypeBuild == "Stable" ];then
-            ZipName="[$GetBD][$TypeBuildTag][$CODENAME]$KVer-$KName-$HeadCommitId.zip"
+            ZipName="[GCC][$GetBD][$TypeBuildTag][$CODENAME]$KVer-$KName-$HeadCommitId.zip"
         else
-            ZipName="[$GetBD][$TypeBuildTag][$TypeBuild][$CODENAME]$KVer-$KName-$HeadCommitId.zip"
+            ZipName="[GCC][$GetBD][$TypeBuildTag][$TypeBuild][$CODENAME]$KVer-$KName-$HeadCommitId.zip"
         fi
         # RealZipName="[$GetBD]$KVer-$HeadCommitId.zip"
         RealZipName="$ZipName"

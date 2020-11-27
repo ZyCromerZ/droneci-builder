@@ -3,7 +3,7 @@ branch="20201110/Tercydux-b"
 . main.sh 'initial'
 
 spectrumFile="bego-on.rc"
-TypeBuild="Stable-TEST"
+TypeBuild="Stable"
 TypeBuildTag="AOSP-CFW"
 getInfo ">> Building kernel . . . . <<"
 FolderUp="Tercy"

@@ -1,6 +1,6 @@
 #! /bin/bash
 branch="20201110/df-keqing"
-. main.sh 'initial'
+. main.sh 'initial-gcc'
 
 spectrumFile="bego-on-p.rc"
 TypeBuild="Personal-Stable"

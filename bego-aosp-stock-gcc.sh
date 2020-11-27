@@ -1,11 +1,10 @@
 #! /bin/bash
-branch="20201110/Tercydux-Santuy-rc"
-. main.sh 'initial'
+branch="20200907/root-upstream-mod"
+. main.sh 'initial-gcc'
 
 spectrumFile="bego-on.rc"
-TypeBuild="Stable-RC"
+TypeBuild="STOCK"
 TypeBuildTag="AOSP-CFW"
 getInfo ">> Building kernel . . . . <<"
-FolderUp="Tercy"
 
 CompileKernel

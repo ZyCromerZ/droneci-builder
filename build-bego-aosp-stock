@@ -21,7 +21,7 @@ function make_changes() {
 }
 
 ListBranch=""
-for Files in bego-aosp-stock
+for Files in bego-aosp-stock bego-aosp-stock-gcc
 do
     git branch -D $Files$TAGS
     make_changes $Files$TAGS

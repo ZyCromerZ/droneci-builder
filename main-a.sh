@@ -61,9 +61,9 @@ if [ ! -z "$1" ] && [ "$1" == 'initial' ];then
     getInfo ">> cloning clang . . . <<"
     git clone https://github.com/ZyCromerZ/google-clang -b 9.0.8-r365631c $clangDir --depth=1
     getInfo ">> cloning gcc64 . . . <<"
-    git clone https://github.com/theradcolor/aarch64-linux-gnu -b stable-gcc $gcc64Dir --depth=1
+    git clone https://github.com/ZyCromerZ/aarch64-linux-gnu-1 -b stable-gcc $gcc64Dir --depth=1
     getInfo ">> cloning gcc32 . . . <<"
-    git clone https://github.com/theradcolor/arm-linux-gnueabi.git -b stable-gcc $gcc32Dir --depth=1
+    git clone https://github.com/ZyCromerZ/arm-linux-gnueabi -b stable-gcc $gcc32Dir --depth=1
     getInfo ">> cloning Anykernel . . . <<"
     git clone https://github.com/ZyCromerZ/AnyKernel3 -b master-begonia $AnykernelDir --depth=1
     getInfo ">> cloning Spectrum . . . <<"

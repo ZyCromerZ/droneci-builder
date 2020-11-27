@@ -1,6 +1,6 @@
 #! /bin/bash
 branch="20201121/qk-ul"
-. main-b.sh 'initial'
+. main-b.sh 'initial-gcc'
 
 spectrumFile="ul.rc"
 TypeBuild="Stable"

@@ -1,6 +1,6 @@
 #! /bin/bash
 branch="20201121/qk-n"
-. main-b.sh 'initial'
+. main-b.sh 'initial-gcc'
 
 spectrumFile="vipn.rc"
 TypeBuild="Stable"

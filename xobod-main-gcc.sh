@@ -1,6 +1,6 @@
 #! /bin/bash
 branch="20201121/main"
-. main-b.sh 'initial'
+. main-b.sh 'initial-gcc'
 
 spectrumFile="none"
 TypeBuild="TEST-Main"

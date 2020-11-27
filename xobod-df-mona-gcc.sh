@@ -1,12 +1,12 @@
 #! /bin/bash
 branch="20201121/df-mona"
-. main-b.sh 'initial'
+. main-b.sh 'initial-gcc'
 
 spectrumFile="f.rc"
 TypeBuild="Stable"
 TypeBuildTag="AOSP"
 getInfo ">> Building kernel . . . . <<"
-FolderUp="Tercy-A"
+FolderUp="Mona"
 
 CompileKernelGcc
 CompileKernelGcc "65"

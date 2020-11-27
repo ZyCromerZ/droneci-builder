@@ -1,12 +1,12 @@
 #! /bin/bash
 branch="20201121/df-fischl"
-. main-b.sh 'initial'
+. main-b.sh 'initial-gcc'
 
 spectrumFile="vipn.rc"
 TypeBuild="Stable"
 TypeBuildTag="AOSP"
 getInfo ">> Building kernel . . . . <<"
-FolderUp="Tercy-B"
+FolderUp="Fischl"
 
 CompileKernelGcc
 CompileKernelGcc "65"
