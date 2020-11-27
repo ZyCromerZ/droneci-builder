@@ -1,6 +1,6 @@
 #! /bin/bash
 if [ ! -z "$1" ];then
-    TAGS="-rc"
+    TAGS="-$1"
 else
     TAGS=""
 fi
@@ -21,14 +21,14 @@ function make_changes() {
 }
 
 ListBranch=""
-for Files in bego-aosp-stock bego-aosp-stock-gcc
+for Files in bego-aosp-stock$TAGS
 do
-    git branch -D $Files$TAGS
-    make_changes $Files$TAGS
-    ListBranch="$ListBranch $Files$TAGS"
-    git checkout master
+    if [[ -e ${Files}.sh ]];then
+        git branch -D $Files
+        make_changes $Files
+        ListBranch="$ListBranch $Files"
+        git checkout master
+    fi
 done
 
 git push -f neet $ListBranch
-
-git checkout master

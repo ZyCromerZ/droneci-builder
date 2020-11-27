@@ -324,7 +324,7 @@ CompileKernel(){
 
 CompileKernelGcc(){
     cd $kernelDir
-    # export KBUILD_COMPILER_STRING
+    export KBUILD_COMPILER_STRING
     MAKE+=(
             ARCH=$ARCH \
             SUBARCH=$ARCH \

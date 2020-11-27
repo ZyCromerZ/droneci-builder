@@ -1,6 +1,6 @@
 #! /bin/bash
 if [ ! -z "$1" ];then
-    TAGS="-rc"
+    TAGS="-$1"
 else
     TAGS=""
 fi
@@ -21,12 +21,14 @@ function make_changes() {
 }
 
 ListBranch=""
-for Files in xobod-df-keqing xobod-df-keqing-gcc xobod-df-mona xobod-df-mona-gcc xobod-df-fischl xobod-df-fischl-gcc xobod-qk-l xobod-qk-l-gcc xobod-qk-n xobod-qk-n-gcc xobod-qk-ul xobod-qk-ul-gcc
+for Files in xobod-df-keqing$TAGS xobod-df-mona$TAGS xobod-df-fischl$TAGS xobod-qk-l$TAGS xobod-qk-n$TAGS xobod-qk-ul$TAGS
 do
-    git branch -D $Files$TAGS
-    make_changes $Files$TAGS
-    ListBranch="$ListBranch $Files$TAGS"
-    git checkout master
+    if [[ -e ${Files}.sh ]];then
+        git branch -D $Files
+        make_changes $Files
+        ListBranch="$ListBranch $Files"
+        git checkout master
+    fi
 done
 
 git push -f neet $ListBranch
