@@ -59,7 +59,7 @@ if [ ! -z "$1" ] && [ "$1" == 'initial' ];then
         git clone https://$GIT_SECRET@github.com/ZyCromerZ/begonia_kernel -b "$branch" $kernelDir --depth=1 
     fi
     getInfo ">> cloning clang . . . <<"
-    git clone https://github.com/ZyCromerZ/google-clang -b 9.0.4-r353983d $clangDir --depth=1
+    git clone https://github.com/nibaji/DragonTC-8.0 -b master $clangDir --depth=1
     getInfo ">> cloning gcc64 . . . <<"
     git clone https://github.com/ZyCromerZ/aarch64-linux-gnu-1 -b stable-gcc $gcc64Dir --depth=1
     getInfo ">> cloning gcc32 . . . <<"
