@@ -1,6 +1,6 @@
 #! /bin/bash
 branch="20201110/Tercydux-Santuy"
-BuilderKernel="00000"
+BuilderKernel="gcc"
 
 . main.sh 'initial'
 
