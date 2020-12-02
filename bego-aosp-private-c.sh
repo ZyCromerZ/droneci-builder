@@ -1,6 +1,6 @@
 #! /bin/bash
 branch="20201110/df-mona"
-BuilderKernel="00000"
+BuilderKernel="dtc"
 
 . main.sh 'initial'
 
