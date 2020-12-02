@@ -22,6 +22,7 @@
 # - branch
 # - spectrumFile
 # Then call CompileKernel and done
+# BuilderKernel
 
 getInfo() {
     echo -e "\e[1;32m$*\e[0m"
@@ -50,7 +51,6 @@ GdriveDir=$mainDir/Gdrive-Uploader
 apt-get -y update && apt-get -y upgrade && apt-get -y install tzdata git automake lzop bison gperf build-essential zip curl zlib1g-dev g++-multilib libxml2-utils bzip2 libbz2-dev libbz2-1.0 libghc-bzlib-dev squashfs-tools pngcrush schedtool dpkg-dev liblz4-tool make optipng bc libstdc++6 wget python3 python3-pip python gcc clang libssl-dev rsync flex git-lfs libz3-dev libz3-4 axel tar && python3 -m pip  install networkx
 
 if [ ! -z "$1" ] && [ "$1" == 'initial' ];then
-
     if [ ! -z "$2" ] && [ "$2" == 'full' ];then
         getInfo ">> cloning kernel full . . . <<"
         git clone https://$GIT_SECRET@github.com/ZyCromerZ/begonia_kernel -b "$branch" $kernelDir
@@ -58,11 +58,18 @@ if [ ! -z "$1" ] && [ "$1" == 'initial' ];then
         getInfo ">> cloning kernel . . . <<"
         git clone https://$GIT_SECRET@github.com/ZyCromerZ/begonia_kernel -b "$branch" $kernelDir --depth=1 
     fi
-    getInfo ">> cloning clang . . . <<"
-    git clone https://github.com/nibaji/DragonTC-8.0 -b master $clangDir --depth=1
-    getInfo ">> cloning gcc64 . . . <<"
+    if [ -z "$BuilderKernel" ] && BuilderKernel="clang"
+    if [ "$BuilderKernel" == "clang" ];then
+        getInfo ">> cloning clang 9.0.4-r353983d . . . <<"
+        git clone https://github.com/ZyCromerZ/google-clang -b 9.0.4-r353983d $clangDir --depth=1
+    fi
+    if [ "$BuilderKernel" == "dtc" ];then
+        getInfo ">> cloning DragonTC clang 8 . . . <<"
+        git clone https://github.com/nibaji/DragonTC-8.0 -b master $clangDir --depth=1
+    fi
+    getInfo ">> cloning gcc 10.0.2 aarch64 . . . <<"
     git clone https://github.com/ZyCromerZ/aarch64-linux-gnu-1 -b stable-gcc $gcc64Dir --depth=1
-    getInfo ">> cloning gcc32 . . . <<"
+    getInfo ">> cloning gcc 10.0.2 arm . . . <<"
     git clone https://github.com/ZyCromerZ/arm-linux-gnueabi -b stable-gcc $gcc32Dir --depth=1
     getInfo ">> cloning Anykernel . . . <<"
     git clone https://github.com/ZyCromerZ/AnyKernel3 -b master-begonia $AnykernelDir --depth=1
@@ -86,7 +93,11 @@ if [ ! -z "$1" ] && [ "$1" == 'initial' ];then
     export KBUILD_BUILD_USER="ZyCromerZ"
     export KBUILD_BUILD_HOST="DroneCI-server"
     export KBUILD_BUILD_VERSION=$DRONE_BUILD_NUMBER
-    ClangType="$($clangDir/bin/clang --version | head -n 1)"
+    if [ "$BuilderKernel" == "gcc" ];then
+        ClangType="$($gcc64Dir/bin/aarch64-linux-gnu-gcc --version | head -n 1)"
+    else
+        ClangType="$($clangDir/bin/clang --version | head -n 1)"
+    fi
     KBUILD_COMPILER_STRING="$ClangType"
     if [ -e $gcc64Dir/bin/aarch64-linux-gnu-gcc ];then
         gcc64Type="$($gcc64Dir/bin/aarch64-linux-gnu-gcc --version | head -n 1)"
@@ -219,8 +230,73 @@ tg_send_files(){
 CompileKernel(){
     cd $kernelDir
     export KBUILD_COMPILER_STRING
-    if [ "$FullLto" == "YES" ];then
+    if [ "$BuilderKernel" == "gcc" ];then
         MAKE+=(
+            ARCH=$ARCH \
+            SUBARCH=$ARCH \
+            PATH=$gcc64Dir/bin:$gcc32Dir/bin:/usr/bin:${PATH} \
+            CROSS_COMPILE=aarch64-linux-gnu- \
+            CROSS_COMPILE_ARM32=arm-linux-gnueabi-
+        )
+    else
+        if [ "$FullLto" == "YES" ];then
+            MAKE+=(
+                    ARCH=$ARCH \
+                    SUBARCH=$ARCH \
+                    PATH=$clangDir/bin:$gcc64Dir/bin:$gcc32Dir/bin:/usr/bin:${PATH} \
+                    LD_LIBRARY_PATH="$clangDir/lib64:${LD_LIBRARY_PATH}" \
+                    CC=clang \
+                    CROSS_COMPILE=aarch64-linux-gnu- \
+                    CROSS_COMPILE_ARM32=arm-linux-gnueabi- \
+                    AS=llvm-as \
+                    NM=llvm-nm \
+                    STRIP=llvm-strip \
+                    OBJDUMP=llvm-objdump \
+                    OBJSIZE=llvm-size \
+                    READELF=llvm-readelf \
+                    HOSTCC=clang \
+                    HOSTCXX=clang++ \
+                    HOSTAR=llvm-ar \
+                    HOSTLD=ld.lld \
+                    LD=ld.lld \
+                    CLANG_TRIPLE=aarch64-linux-gnu-
+            )
+        else
+            MAKE+=(
+                    ARCH=$ARCH \
+                    SUBARCH=$ARCH \
+                    PATH=$clangDir/bin:$gcc64Dir/bin:$gcc32Dir/bin:/usr/bin:${PATH} \
+                    LD_LIBRARY_PATH="$clangDir/lib64:${LD_LIBRARY_PATH}" \
+                    CC=clang \
+                    CROSS_COMPILE=aarch64-linux-gnu- \
+                    CROSS_COMPILE_ARM32=arm-linux-gnueabi- \
+                    CLANG_TRIPLE=aarch64-linux-gnu-
+            )
+        fi
+    fi
+    rm -rf out # always remove out directory :V
+    BUILD_START=$(date +"%s")
+    if [ "$BuilderKernel" == "gcc" ];then
+        MSG="<b>🔨 New Kernel On The Way</b>%0A<b>Device: $DEVICE</b>%0A<b>Codename: $CODENAME</b>%0A<b>Branch: $branch</b>%0A<b>Build Date: $GetCBD </b>%0A<b>Build Number: $DRONE_BUILD_NUMBER </b>%0A<b>Build Link Progress:</b><a href='https://cloud.drone.io/NEETroid/droneci-builder/$DRONE_BUILD_NUMBER/1/2'> Check Here </a>%0A<b>Host Core Count : $TotalCores cores </b>%0A<b>Kernel Version: $KVer</b>%0A<b>Last Commit-Id: $HeadCommitId </b>%0A<b>Last Commit-Message: $HeadCommitMsg </b>%0A<b>Builder Info: </b>%0A<code>xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx</code>%0A<code>- $gcc64Type </code>%0A<code>- $gcc32Type </code>%0A<code>xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx</code>%0A%0A #$TypeBuildTag  #$TypeBuild"
+    else
+        MSG="<b>🔨 New Kernel On The Way</b>%0A<b>Device: $DEVICE</b>%0A<b>Codename: $CODENAME</b>%0A<b>Branch: $branch</b>%0A<b>Build Date: $GetCBD </b>%0A<b>Build Number: $DRONE_BUILD_NUMBER </b>%0A<b>Build Link Progress:</b><a href='https://cloud.drone.io/NEETroid/droneci-builder/$DRONE_BUILD_NUMBER/1/2'> Check Here </a>%0A<b>Host Core Count : $TotalCores cores </b>%0A<b>Kernel Version: $KVer</b>%0A<b>Last Commit-Id: $HeadCommitId </b>%0A<b>Last Commit-Message: $HeadCommitMsg </b>%0A<b>Builder Info: </b>%0A<code>xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx</code>%0A<code>- $ClangType </code>%0A<code>- $gcc64Type </code>%0A<code>- $gcc32Type </code>%0A<code>xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx</code>%0A%0A #$TypeBuildTag  #$TypeBuild"
+    fi
+    if [ ! -z "$1" ];then
+        tg_send_info "$MSG" "$1"
+    else
+        tg_send_info "$MSG" 
+    fi
+    make -j${TotalCores}  O=out ARCH="$ARCH" "$DEFFCONFIG"
+    if [ "$BuilderKernel" == "gcc" ];then
+        make -j${TotalCores}  O=out \
+            ARCH=$ARCH \
+            SUBARCH=$ARCH \
+            PATH=$gcc64Dir/bin:$gcc32Dir/bin:/usr/bin:${PATH} \
+            CROSS_COMPILE=aarch64-linux-gnu- \
+            CROSS_COMPILE_ARM32=arm-linux-gnueabi-
+    else
+        if [ "$FullLto" == "YES" ];then
+            make -j${TotalCores}  O=out \
                 ARCH=$ARCH \
                 SUBARCH=$ARCH \
                 PATH=$clangDir/bin:$gcc64Dir/bin:$gcc32Dir/bin:/usr/bin:${PATH} \
@@ -240,9 +316,8 @@ CompileKernel(){
                 HOSTLD=ld.lld \
                 LD=ld.lld \
                 CLANG_TRIPLE=aarch64-linux-gnu-
-        )
-    else
-        MAKE+=(
+        else
+            make -j${TotalCores}  O=out \
                 ARCH=$ARCH \
                 SUBARCH=$ARCH \
                 PATH=$clangDir/bin:$gcc64Dir/bin:$gcc32Dir/bin:/usr/bin:${PATH} \
@@ -251,58 +326,20 @@ CompileKernel(){
                 CROSS_COMPILE=aarch64-linux-gnu- \
                 CROSS_COMPILE_ARM32=arm-linux-gnueabi- \
                 CLANG_TRIPLE=aarch64-linux-gnu-
-        )
-    fi
-    rm -rf out # always remove out directory :V
-    BUILD_START=$(date +"%s")
-    MSG="<b>🔨 New Kernel On The Way</b>%0A<b>Device: $DEVICE</b>%0A<b>Codename: $CODENAME</b>%0A<b>Branch: $branch</b>%0A<b>Build Date: $GetCBD </b>%0A<b>Build Number: $DRONE_BUILD_NUMBER </b>%0A<b>Build Link Progress:</b><a href='https://cloud.drone.io/NEETroid/droneci-builder/$DRONE_BUILD_NUMBER/1/2'> Check Here </a>%0A<b>Host Core Count : $TotalCores cores </b>%0A<b>Kernel Version: $KVer</b>%0A<b>Last Commit-Id: $HeadCommitId </b>%0A<b>Last Commit-Message: $HeadCommitMsg </b>%0A<b>Builder Info: </b>%0A<code>xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx</code>%0A<code>- $ClangType </code>%0A<code>- $gcc64Type </code>%0A<code>- $gcc32Type </code>%0A<code>xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx</code>%0A%0A #$TypeBuildTag  #$TypeBuild"
-    if [ ! -z "$1" ];then
-        tg_send_info "$MSG" "$1"
-    else
-        tg_send_info "$MSG" 
-    fi
-    make -j${TotalCores}  O=out ARCH="$ARCH" "$DEFFCONFIG"
-    if [ "$FullLto" == "YES" ];then
-        make -j${TotalCores}  O=out \
-            ARCH=$ARCH \
-            SUBARCH=$ARCH \
-            PATH=$clangDir/bin:$gcc64Dir/bin:$gcc32Dir/bin:/usr/bin:${PATH} \
-            LD_LIBRARY_PATH="$clangDir/lib64:${LD_LIBRARY_PATH}" \
-            CC=clang \
-            CROSS_COMPILE=aarch64-linux-gnu- \
-            CROSS_COMPILE_ARM32=arm-linux-gnueabi- \
-            AS=llvm-as \
-            NM=llvm-nm \
-            STRIP=llvm-strip \
-            OBJDUMP=llvm-objdump \
-            OBJSIZE=llvm-size \
-            READELF=llvm-readelf \
-            HOSTCC=clang \
-            HOSTCXX=clang++ \
-            HOSTAR=llvm-ar \
-            HOSTLD=ld.lld \
-            LD=ld.lld \
-            CLANG_TRIPLE=aarch64-linux-gnu-
-    else
-        make -j${TotalCores}  O=out \
-            ARCH=$ARCH \
-            SUBARCH=$ARCH \
-            PATH=$clangDir/bin:$gcc64Dir/bin:$gcc32Dir/bin:/usr/bin:${PATH} \
-            LD_LIBRARY_PATH="$clangDir/lib64:${LD_LIBRARY_PATH}" \
-            CC=clang \
-            CROSS_COMPILE=aarch64-linux-gnu- \
-            CROSS_COMPILE_ARM32=arm-linux-gnueabi- \
-            CLANG_TRIPLE=aarch64-linux-gnu-
+        fi
     fi
     BUILD_END=$(date +"%s")
     DIFF=$((BUILD_END - BUILD_START))
     if [ -f $kernelDir/out/arch/$ARCH/boot/Image.gz-dtb ];then
         cp -af $kernelDir/out/arch/$ARCH/boot/Image.gz-dtb $AnykernelDir
         KName=$(cat "$(pwd)/arch/$ARCH/configs/$DEFFCONFIG" | grep "CONFIG_LOCALVERSION=" | sed 's/CONFIG_LOCALVERSION="-*//g' | sed 's/"*//g' )
+        [[ "$BuilderKernel" == "gcc" ]] && TypeBuilder="GCC"
+        [[ "$BuilderKernel" == "clang" ]] && TypeBuilder="Clang"
+        [[ "$BuilderKernel" == "dtc" ]] && TypeBuilder="DTC"
         if [ $TypeBuild == "Stable" ];then
-            ZipName="[Clang][$GetBD][$TypeBuildTag][$CODENAME]$KVer-$KName-$HeadCommitId.zip"
+            ZipName="[$TypeBuilder][$GetBD][$TypeBuildTag][$CODENAME]$KVer-$KName-$HeadCommitId.zip"
         else
-            ZipName="[Clang][$GetBD][$TypeBuildTag][$TypeBuild][$CODENAME]$KVer-$KName-$HeadCommitId.zip"
+            ZipName="[$TypeBuilder][$GetBD][$TypeBuildTag][$TypeBuild][$CODENAME]$KVer-$KName-$HeadCommitId.zip"
         fi
         # RealZipName="[$GetBD]$KVer-$HeadCommitId.zip"
         RealZipName="$ZipName"
@@ -322,59 +359,6 @@ CompileKernel(){
     fi
 }
 
-CompileKernelGcc(){
-    cd $kernelDir
-    export KBUILD_COMPILER_STRING
-    MAKE+=(
-            ARCH=$ARCH \
-            SUBARCH=$ARCH \
-            PATH=$gcc64Dir/bin:$gcc32Dir/bin:/usr/bin:${PATH} \
-            CROSS_COMPILE=aarch64-linux-gnu- \
-            CROSS_COMPILE_ARM32=arm-linux-gnueabi-
-    )
-    rm -rf out # always remove out directory :V
-    BUILD_START=$(date +"%s")
-    MSG="<b>🔨 New Kernel On The Way</b>%0A<b>Device: $DEVICE</b>%0A<b>Codename: $CODENAME</b>%0A<b>Branch: $branch</b>%0A<b>Build Date: $GetCBD </b>%0A<b>Build Number: $DRONE_BUILD_NUMBER </b>%0A<b>Build Link Progress:</b><a href='https://cloud.drone.io/NEETroid/droneci-builder/$DRONE_BUILD_NUMBER/1/2'> Check Here </a>%0A<b>Host Core Count : $TotalCores cores </b>%0A<b>Kernel Version: $KVer</b>%0A<b>Last Commit-Id: $HeadCommitId </b>%0A<b>Last Commit-Message: $HeadCommitMsg </b>%0A<b>Builder Info: </b>%0A<code>xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx</code>%0A<code>- $gcc64Type </code>%0A<code>- $gcc32Type </code>%0A<code>xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx</code>%0A%0A #$TypeBuildTag  #$TypeBuild"
-    if [ ! -z "$1" ];then
-        tg_send_info "$MSG" "$1"
-    else
-        tg_send_info "$MSG" 
-    fi
-    make -j${TotalCores}  O=out ARCH="$ARCH" "$DEFFCONFIG"
-    make -j${TotalCores}  O=out \
-        ARCH=$ARCH \
-        SUBARCH=$ARCH \
-        PATH=$gcc64Dir/bin:$gcc32Dir/bin:/usr/bin:${PATH} \
-        CROSS_COMPILE=aarch64-linux-gnu- \
-        CROSS_COMPILE_ARM32=arm-linux-gnueabi-
-        
-    BUILD_END=$(date +"%s")
-    DIFF=$((BUILD_END - BUILD_START))
-    if [ -f $kernelDir/out/arch/$ARCH/boot/Image.gz-dtb ];then
-        cp -af $kernelDir/out/arch/$ARCH/boot/Image.gz-dtb $AnykernelDir
-        KName=$(cat "$(pwd)/arch/$ARCH/configs/$DEFFCONFIG" | grep "CONFIG_LOCALVERSION=" | sed 's/CONFIG_LOCALVERSION="-*//g' | sed 's/"*//g' )
-        if [ $TypeBuild == "Stable" ];then
-            ZipName="[GCC][$GetBD][$TypeBuildTag][$CODENAME]$KVer-$KName-$HeadCommitId.zip"
-        else
-            ZipName="[GCC][$GetBD][$TypeBuildTag][$TypeBuild][$CODENAME]$KVer-$KName-$HeadCommitId.zip"
-        fi
-        # RealZipName="[$GetBD]$KVer-$HeadCommitId.zip"
-        RealZipName="$ZipName"
-        if [ ! -z "$1" ];then
-            MakeZip "$1"
-        else
-            MakeZip
-        fi
-    else
-        MSG="<b>❌ Build failed</b>%0A- <code>$((DIFF / 60)) minute(s) $((DIFF % 60)) second(s)</code>%0A%0ASad Boy"
-        if [ ! -z "$1" ];then
-            tg_send_info "$MSG" "$1"
-        else
-            tg_send_info "$MSG" 
-        fi
-        exit -1
-    fi
-}
 
 MakeZip(){
     cd $AnykernelDir
