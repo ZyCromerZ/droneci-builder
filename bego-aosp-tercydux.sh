@@ -1,5 +1,7 @@
 #! /bin/bash
 branch="20201110/Tercydux-Santuy"
+BuilderKernel="00000"
+
 . main.sh 'initial'
 
 spectrumFile="bego-on.rc"
