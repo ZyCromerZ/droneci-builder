@@ -1,6 +1,6 @@
 #! /bin/bash
 branch="20201110/Tercydux-Tiris"
-BuilderKernel="00000"
+BuilderKernel="clang"
 
 . main.sh 'initial'
 
