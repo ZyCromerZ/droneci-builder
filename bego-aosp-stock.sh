@@ -1,6 +1,6 @@
 #! /bin/bash
 branch="20200907/root-upstream-mod"
-BuilderKernel="00000"
+BuilderKernel="gcc"
 
 . main.sh 'initial' 'full'
 export KBUILD_BUILD_VERSION=3
