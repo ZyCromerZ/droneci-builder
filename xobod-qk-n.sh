@@ -3,6 +3,7 @@ branch="20201121/qk-n"
 BuilderKernel="00000"
 
 . main-b.sh 'initial'
+export KBUILD_BUILD_VERSION=3
 
 spectrumFile="vipn.rc"
 TypeBuild="Stable"

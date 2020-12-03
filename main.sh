@@ -92,7 +92,7 @@ if [ ! -z "$1" ] && [ "$1" == 'initial' ];then
     FolderUp=""
     export KBUILD_BUILD_USER="ZyCromerZ"
     export KBUILD_BUILD_HOST="DroneCI-server"
-    export KBUILD_BUILD_VERSION=$DRONE_BUILD_NUMBER
+    # export KBUILD_BUILD_VERSION=$DRONE_BUILD_NUMBER
     if [ "$BuilderKernel" == "gcc" ];then
         ClangType="$($gcc64Dir/bin/aarch64-linux-gnu-gcc --version | head -n 1)"
     else
@@ -155,7 +155,7 @@ if [ ! -z "$1" ] && [ "$1" == 'initial-gcc' ];then
     FolderUp=""
     export KBUILD_BUILD_USER="ZyCromerZ"
     export KBUILD_BUILD_HOST="DroneCI-server"
-    export KBUILD_BUILD_VERSION=$DRONE_BUILD_NUMBER
+    # export KBUILD_BUILD_VERSION=$DRONE_BUILD_NUMBER
     ClangType="$($gcc64Dir/bin/aarch64-linux-gnu-gcc --version | head -n 1)"
     KBUILD_COMPILER_STRING="$ClangType"
     if [ -e $gcc64Dir/bin/aarch64-linux-gnu-gcc ];then
@@ -337,9 +337,9 @@ CompileKernel(){
         [[ "$BuilderKernel" == "clang" ]] && TypeBuilder="Clang"
         [[ "$BuilderKernel" == "dtc" ]] && TypeBuilder="DTC"
         if [ $TypeBuild == "Stable" ];then
-            ZipName="[$TypeBuilder][$GetBD][$TypeBuildTag][$CODENAME]$KVer-$KName-$HeadCommitId.zip"
+            ZipName="[$GetBD][$TypeBuilder][$TypeBuildTag][$CODENAME]$KVer-$KName-$HeadCommitId.zip"
         else
-            ZipName="[$TypeBuilder][$GetBD][$TypeBuildTag][$TypeBuild][$CODENAME]$KVer-$KName-$HeadCommitId.zip"
+            ZipName="[$GetBD][$TypeBuilder][$TypeBuildTag][$TypeBuild][$CODENAME]$KVer-$KName-$HeadCommitId.zip"
         fi
         # RealZipName="[$GetBD]$KVer-$HeadCommitId.zip"
         RealZipName="$ZipName"

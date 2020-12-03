@@ -3,6 +3,7 @@ branch="20201121/df-fischl"
 BuilderKernel="00000"
 
 . main-b.sh 'initial'
+export KBUILD_BUILD_VERSION=4
 
 spectrumFile="vipn.rc"
 TypeBuild="Stable"

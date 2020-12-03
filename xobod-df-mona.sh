@@ -3,6 +3,7 @@ branch="20201121/df-mona"
 BuilderKernel="00000"
 
 . main-b.sh 'initial'
+export KBUILD_BUILD_VERSION=5
 
 spectrumFile="f.rc"
 TypeBuild="Stable"

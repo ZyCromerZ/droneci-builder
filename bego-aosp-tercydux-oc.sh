@@ -3,6 +3,7 @@ branch="20201110/Tercydux-Hareudang"
 BuilderKernel="00000"
 
 . main.sh 'initial'
+export KBUILD_BUILD_VERSION=6
 
 spectrumFile="bego-on.rc"
 TypeBuild="Stable"

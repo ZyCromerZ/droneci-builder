@@ -3,6 +3,7 @@ branch="20201121/qk-ul"
 BuilderKernel="00000"
 
 . main-b.sh 'initial'
+export KBUILD_BUILD_VERSION=1
 
 spectrumFile="ul.rc"
 TypeBuild="Stable"

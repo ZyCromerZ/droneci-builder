@@ -85,7 +85,7 @@ if [ ! -z "$1" ] && [ "$1" == 'initial' ];then
     FolderUp=""
     export KBUILD_BUILD_USER="ZyCromerZ"
     export KBUILD_BUILD_HOST="DroneCI-server"
-    export KBUILD_BUILD_VERSION=$DRONE_BUILD_NUMBER
+    # export KBUILD_BUILD_VERSION=$DRONE_BUILD_NUMBER
     ClangType="$($clangDir/bin/clang --version | head -n 1)"
     KBUILD_COMPILER_STRING="$ClangType"
     if [ -e $gcc64Dir/bin/aarch64-linux-gnu-gcc ];then
