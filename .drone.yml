@@ -3,6 +3,8 @@ clone:
   depth: 1
 kind: pipeline
 name: ZyCPipeline
+concurrency:
+  limit: 6
 steps: 
   - 
     commands: 
