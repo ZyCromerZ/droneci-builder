@@ -60,8 +60,8 @@ if [ ! -z "$1" ] && [ "$1" == 'initial' ];then
     fi
     [ -z "$BuilderKernel" ] && BuilderKernel="clang"
     if [ "$BuilderKernel" == "clang" ];then
-        getInfo ">> cloning clang 9.0.4-r353983d . . . <<"
-        git clone https://github.com/ZyCromerZ/google-clang -b 9.0.4-r353983d $clangDir --depth=1
+        getInfo ">> cloning clang 11.0.3-r383902c . . . <<"
+        git clone https://github.com/ZyCromerZ/google-clang -b 11.0.3-r383902c $clangDir --depth=1
     fi
     if [ "$BuilderKernel" == "dtc" ];then
         getInfo ">> cloning DragonTC clang 10 . . . <<"
