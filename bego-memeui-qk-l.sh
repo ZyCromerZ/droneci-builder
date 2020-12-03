@@ -1,6 +1,6 @@
 #! /bin/bash
 branch="mi10/20200829-qk-l"
-. main.sh 'initial'
+. main.sh 'initial' 'full'
 
 spectrumFile="bego-on-memeui.rc"
 TypeBuild="Stable"

@@ -2,7 +2,7 @@
 branch="20201110/df-mona"
 BuilderKernel="00000"
 
-. main.sh 'initial'
+. main.sh 'initial' 'full'
 export KBUILD_BUILD_VERSION=8
 
 spectrumFile="bego-on-p.rc"

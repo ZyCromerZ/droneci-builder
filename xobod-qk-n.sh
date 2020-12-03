@@ -2,7 +2,7 @@
 branch="20201121/qk-n"
 BuilderKernel="00000"
 
-. main-b.sh 'initial'
+. main-b.sh 'initial' 'full'
 export KBUILD_BUILD_VERSION=3
 
 spectrumFile="vipn.rc"
@@ -25,4 +25,4 @@ CompileKernel "68"
 CompileKernel "71"
 CompileKernel "72"
 
-tg_send_info "All QuantumKiller-N [00000] already uploaded to Gdrive :D"
+tg_send_info "All QuantumKiller-N $BuilderKernel already uploaded to Gdrive :D"

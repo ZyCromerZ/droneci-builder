@@ -2,7 +2,7 @@
 branch="20201121/df-mona"
 BuilderKernel="00000"
 
-. main-b.sh 'initial'
+. main-b.sh 'initial' 'full'
 export KBUILD_BUILD_VERSION=5
 
 spectrumFile="f.rc"
@@ -25,4 +25,4 @@ CompileKernel "68"
 CompileKernel "71"
 CompileKernel "72"
 
-tg_send_info "All DeathFlower-Mona [00000] already uploaded to Gdrive :D"
+tg_send_info "All DeathFlower-Mona $BuilderKernel already uploaded to Gdrive :D"

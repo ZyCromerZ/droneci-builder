@@ -2,7 +2,7 @@
 branch="20201110/Tercydux-Santuy"
 BuilderKernel="00000"
 
-. main.sh 'initial'
+. main.sh 'initial' 'full'
 export KBUILD_BUILD_VERSION=5
 
 spectrumFile="bego-on.rc"

@@ -54,8 +54,6 @@ if [ ! -z "$1" ] && [ "$1" == 'initial' ];then
     if [ ! -z "$2" ] && [ "$2" == 'full' ];then
         getInfo ">> cloning kernel full . . . <<"
         git clone https://$GIT_SECRET@github.com/ZyCromerZ/X01BD_kernel -b "$branch" $kernelDir
-    git clone https://$GIT_SECRET@github.com/ZyCromerZ/X01BD_kernel -b "$branch" $kernelDir 
-        git clone https://$GIT_SECRET@github.com/ZyCromerZ/X01BD_kernel -b "$branch" $kernelDir
     else
         getInfo ">> cloning kernel . . . <<"
         git clone https://$GIT_SECRET@github.com/ZyCromerZ/X01BD_kernel -b "$branch" $kernelDir --depth=1 

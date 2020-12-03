@@ -2,7 +2,7 @@
 branch="20201110/Tercydux-b"
 BuilderKernel="00000"
 
-. main.sh 'initial'
+. main.sh 'initial' 'full'
 
 spectrumFile="bego-on.rc"
 TypeBuild="Stable"
