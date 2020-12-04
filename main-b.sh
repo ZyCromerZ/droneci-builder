@@ -67,21 +67,21 @@ if [ ! -z "$1" ] && [ "$1" == 'initial' ];then
         getInfo ">> cloning DragonTC clang 10 . . . <<"
         git clone https://github.com/NusantaraDevs/DragonTC -b 10.0 $clangDir --depth=1
     fi
-    if [ "$BuilderKernel" == "gcc" ];then
+    # if [ "$BuilderKernel" == "gcc" ];then
         getInfo ">> cloning gcc64 . . . <<"
         git clone https://github.com/ZyCromerZ/aarch64-linux-android-4.9/ -b android-10.0.0_r47 $gcc64Dir --depth=1
         getInfo ">> cloning gcc32 . . . <<"
         git clone https://github.com/ZyCromerZ/arm-linux-androideabi-4.9/ -b android-10.0.0_r47 $gcc32Dir --depth=1
         for64=aarch64-linux-android
         for32=arm-linux-androideabi
-    else
-        getInfo ">> cloning gcc64 . . . <<"
-        git clone https://github.com/ZyCromerZ/aarch64-linux-gnu-1 -b stable-gcc $gcc64Dir --depth=1
-        getInfo ">> cloning gcc32 . . . <<"
-        git clone https://github.com/ZyCromerZ/arm-linux-gnueabi -b stable-gcc $gcc32Dir --depth=1
-        for64=aarch64-linux-gnu
-        for32=arm-linux-gnueabi
-    fi
+    # else
+    #     getInfo ">> cloning gcc64 . . . <<"
+    #     git clone https://github.com/ZyCromerZ/aarch64-linux-gnu-1 -b stable-gcc $gcc64Dir --depth=1
+    #     getInfo ">> cloning gcc32 . . . <<"
+    #     git clone https://github.com/ZyCromerZ/arm-linux-gnueabi -b stable-gcc $gcc32Dir --depth=1
+    #     for64=aarch64-linux-gnu
+    #     for32=arm-linux-gnueabi
+    # fi
 
     getInfo ">> cloning Anykernel . . . <<"
     git clone https://github.com/ZyCromerZ/AnyKernel3 -b master $AnykernelDir --depth=1
