@@ -8,7 +8,7 @@ concurrency:
 steps: 
   - 
     commands: 
-      - "bash ./main.sh"
+      - "bash ./xobod-df-fischl.sh"
     environment: 
       BOT_TOKEN: 
         from_secret: BOT_API_KEY
