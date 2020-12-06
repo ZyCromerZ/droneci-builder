@@ -1,6 +1,6 @@
 #! /bin/bash
 branch="20201121/df-fischl"
-BuilderKernel="00000"
+BuilderKernel="clang"
 
 . main-b.sh 'initial' 'full'
 export KBUILD_BUILD_VERSION=4
