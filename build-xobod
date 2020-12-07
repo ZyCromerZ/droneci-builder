@@ -21,7 +21,7 @@ function make_changes() {
 }
 
 ListBranch=""
-for Files in xobod-df-keqing xobod-df-mona xobod-df-fischl xobod-qk-l xobod-qk-n xobod-qk-ul
+for Files in xobod-main
 do
     if [ "$TAGS" == "all" ];then
         if [[ -e ${Files}.sh ]];then
