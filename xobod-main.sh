@@ -1,16 +1,17 @@
 #! /bin/bash
-branch="20201207/main"
+branch="20201208/main"
 BuilderKernel="00000"
 
 . main-b.sh 'initial' 'full'
 
+FolderUp="BrokenNucleus"
 spectrumFile="none"
 TypeBuild="TEST-Main"
 TypeBuildTag="AOSP"
 getInfo ">> Building kernel . . . . <<"
 
 CompileKernel
-# CompileKernel "65"
+CompileKernel "65"
 # CompileKernel "68"
 # CompileKernel "71"
 # CompileKernel "72"
@@ -18,7 +19,7 @@ CompileKernel
 FixPieWifi
 
 CompileKernel
-# CompileKernel "65"
+CompileKernel "65"
 # CompileKernel "68"
 # CompileKernel "71"
 # CompileKernel "72"

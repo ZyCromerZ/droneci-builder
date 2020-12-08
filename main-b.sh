@@ -45,7 +45,7 @@ AnykernelDir=$mainDir/Anykernel3
 
 SpectrumDir=$mainDir/Spectrum
 
-# GdriveDir=$mainDir/Gdrive-Uploader
+GdriveDir=$mainDir/Gdrive-Uploader
 
 
 if [ ! -z "$1" ] && [ "$1" == 'initial' ];then
@@ -87,8 +87,8 @@ if [ ! -z "$1" ] && [ "$1" == 'initial' ];then
     git clone https://github.com/ZyCromerZ/AnyKernel3 -b master $AnykernelDir --depth=1
     getInfo ">> cloning Spectrum . . . <<"
     git clone https://github.com/ZyCromerZ/Spectrum -b master $SpectrumDir --depth=1
-    # getInfo ">> cloning Gdrive Uploader . . . <<"
-    # git clone https://$GIT_SECRET@github.com/ZyCromerZ/gdrive_uploader -b master $GdriveDir --depth=1 
+    getInfo ">> cloning Gdrive Uploader . . . <<"
+    git clone https://$GIT_SECRET@github.com/ZyCromerZ/gdrive_uploader -b master $GdriveDir --depth=1 
     
     DEVICE="Asus Max Pro M2"
     CODENAME="X01BD"
@@ -162,24 +162,24 @@ tg_send_files(){
 <b>Zip Name</b> 
 - <code>$ZipName</code>"
 
-	curl --progress-bar -F document=@"$KernelFiles" "https://api.telegram.org/bot$BOT_TOKEN/sendDocument" \
-	-F chat_id="$SaveChatID"  \
-	-F "disable_web_page_preview=true" \
-	-F "parse_mode=html" \
-	-F caption="$MSG"
+	# curl --progress-bar -F document=@"$KernelFiles" "https://api.telegram.org/bot$BOT_TOKEN/sendDocument" \
+	# -F chat_id="$SaveChatID"  \
+	# -F "disable_web_page_preview=true" \
+	# -F "parse_mode=html" \
+	# -F caption="$MSG"
 
-    # currentFolder="$(pwd)"
-    # cd $GdriveDir
-    # chmod +x run.sh
-    # . run.sh "$KernelFiles" "x01bd" "$(date +"%m-%d-%Y")" "$FolderUp"
-    # cd $currentFolder
+    currentFolder="$(pwd)"
+    cd $GdriveDir
+    chmod +x run.sh
+    . run.sh "$KernelFiles" "x01bd" "$(date +"%m-%d-%Y")" "$FolderUp"
+    cd $currentFolder
 
-    if [ ! -z "$1" ];then
-        tg_send_info "$MSG" "$1"
-    else
-        tg_send_info "$MSG"
-    fi
-    remove files after build done
+    # if [ ! -z "$1" ];then
+    #     tg_send_info "$MSG" "$1"
+    # else
+    #     tg_send_info "$MSG"
+    # fi
+    # remove files after build done
     rm -rf $KernelFiles
 }
 
@@ -326,7 +326,7 @@ FixPieWifi()
 {
     cd $kernelDir
     git reset --hard origin/$branch
-    git revert f00e0f63441eb6822812569a57252cbbace3b0e8 --no-commit
+    git revert e33d9b9a45b44e73b55657e44ea4c7e4584ce848 --no-commit
     git commit -s -m "Fix wifi broken for Android 9"
     KVer=$(make kernelversion)
     HeadCommitId=$(git log --pretty=format:'%h' -n1)
