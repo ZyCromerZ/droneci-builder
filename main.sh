@@ -67,10 +67,21 @@ if [ ! -z "$1" ] && [ "$1" == 'initial' ];then
         getInfo ">> cloning DragonTC clang 8 . . . <<"
         git clone https://github.com/nibaji/DragonTC-8.0 -b master $clangDir --depth=1
     fi
-    getInfo ">> cloning gcc 10.0.2 aarch64 . . . <<"
-    git clone https://github.com/ZyCromerZ/aarch64-linux-gnu-1 -b stable-gcc $gcc64Dir --depth=1
-    getInfo ">> cloning gcc 10.0.2 arm . . . <<"
-    git clone https://github.com/ZyCromerZ/arm-linux-gnueabi -b stable-gcc $gcc32Dir --depth=1
+    if [ "$BuilderKernel" == "gcc" ];then
+        getInfo ">> cloning gcc google prebuilt aarch64 . . . <<"
+        git clone https://github.com/ZyCromerZ/aarch64-linux-android-4.9/ -b android-10.0.0_r47 $gcc64Dir --depth=1
+        getInfo ">> cloning gcc google prebuilt arm . . . <<"
+        git clone https://github.com/ZyCromerZ/arm-linux-androideabi-4.9/ -b android-10.0.0_r47 $gcc32Dir --depth=1
+        for64=aarch64-linux-android
+        for32=arm-linux-androideabi
+    else
+        getInfo ">> cloning gcc 10.2.0 aarch64 . . . <<"
+        git clone https://github.com/ZyCromerZ/aarch64-linux-gnu-1 -b stable-gcc $gcc64Dir --depth=1
+        getInfo ">> cloning gcc 10.2.0 arm . . . <<"
+        git clone https://github.com/ZyCromerZ/arm-linux-gnueabi -b stable-gcc $gcc32Dir --depth=1
+        for64=aarch64-linux-gnu
+        for32=arm-linux-gnueabi
+    fi
     getInfo ">> cloning Anykernel . . . <<"
     git clone https://github.com/ZyCromerZ/AnyKernel3 -b master-begonia $AnykernelDir --depth=1
     getInfo ">> cloning Spectrum . . . <<"
@@ -94,20 +105,20 @@ if [ ! -z "$1" ] && [ "$1" == 'initial' ];then
     export KBUILD_BUILD_HOST="DroneCI-server"
     # export KBUILD_BUILD_VERSION=$DRONE_BUILD_NUMBER
     if [ "$BuilderKernel" == "gcc" ];then
-        ClangType="$($gcc64Dir/bin/aarch64-linux-gnu-gcc --version | head -n 1)"
+        ClangType="$($gcc64Dir/bin/$for64-gcc --version | head -n 1)"
     else
         ClangType="$($clangDir/bin/clang --version | head -n 1)"
     fi
     KBUILD_COMPILER_STRING="$ClangType"
-    if [ -e $gcc64Dir/bin/aarch64-linux-gnu-gcc ];then
-        gcc64Type="$($gcc64Dir/bin/aarch64-linux-gnu-gcc --version | head -n 1)"
+    if [ -e $gcc64Dir/bin/$for64-gcc ];then
+        gcc64Type="$($gcc64Dir/bin/$for64-gcc --version | head -n 1)"
     else
         cd $gcc64Dir
         gcc64Type=$(git log --pretty=format:'%h: %s' -n1)
         cd $mainDir
     fi
-    if [ -e $gcc32Dir/bin/arm-linux-gnueabi-gcc ];then
-        gcc32Type="$($gcc32Dir/bin/arm-linux-gnueabi-gcc --version | head -n 1)"
+    if [ -e $gcc32Dir/bin/$for32-gcc ];then
+        gcc32Type="$($gcc32Dir/bin/$for32-gcc --version | head -n 1)"
     else
         cd $gcc32Dir
         gcc32Type=$(git log --pretty=format:'%h: %s' -n1)
@@ -176,8 +187,8 @@ CompileKernel(){
             ARCH=$ARCH \
             SUBARCH=$ARCH \
             PATH=$gcc64Dir/bin:$gcc32Dir/bin:/usr/bin:${PATH} \
-            CROSS_COMPILE=aarch64-linux-gnu- \
-            CROSS_COMPILE_ARM32=arm-linux-gnueabi-
+            CROSS_COMPILE=$for64- \
+            CROSS_COMPILE_ARM32=$for32-
         )
     else
         if [ "$FullLto" == "YES" ];then
@@ -187,8 +198,8 @@ CompileKernel(){
                     PATH=$clangDir/bin:$gcc64Dir/bin:$gcc32Dir/bin:/usr/bin:${PATH} \
                     LD_LIBRARY_PATH="$clangDir/lib64:${LD_LIBRARY_PATH}" \
                     CC=clang \
-                    CROSS_COMPILE=aarch64-linux-gnu- \
-                    CROSS_COMPILE_ARM32=arm-linux-gnueabi- \
+                    CROSS_COMPILE=$for64- \
+                    CROSS_COMPILE_ARM32=$for32- \
                     AS=llvm-as \
                     NM=llvm-nm \
                     STRIP=llvm-strip \
@@ -209,8 +220,8 @@ CompileKernel(){
                     PATH=$clangDir/bin:$gcc64Dir/bin:$gcc32Dir/bin:/usr/bin:${PATH} \
                     LD_LIBRARY_PATH="$clangDir/lib64:${LD_LIBRARY_PATH}" \
                     CC=clang \
-                    CROSS_COMPILE=aarch64-linux-gnu- \
-                    CROSS_COMPILE_ARM32=arm-linux-gnueabi- \
+                    CROSS_COMPILE=$for64- \
+                    CROSS_COMPILE_ARM32=$for32- \
                     CLANG_TRIPLE=aarch64-linux-gnu-
             )
         fi
@@ -233,8 +244,8 @@ CompileKernel(){
             ARCH=$ARCH \
             SUBARCH=$ARCH \
             PATH=$gcc64Dir/bin:$gcc32Dir/bin:/usr/bin:${PATH} \
-            CROSS_COMPILE=aarch64-linux-gnu- \
-            CROSS_COMPILE_ARM32=arm-linux-gnueabi-
+            CROSS_COMPILE=$for64- \
+            CROSS_COMPILE_ARM32=$for32-
     else
         if [ "$FullLto" == "YES" ];then
             make -j${TotalCores}  O=out \
@@ -243,8 +254,8 @@ CompileKernel(){
                 PATH=$clangDir/bin:$gcc64Dir/bin:$gcc32Dir/bin:/usr/bin:${PATH} \
                 LD_LIBRARY_PATH="$clangDir/lib64:${LD_LIBRARY_PATH}" \
                 CC=clang \
-                CROSS_COMPILE=aarch64-linux-gnu- \
-                CROSS_COMPILE_ARM32=arm-linux-gnueabi- \
+                CROSS_COMPILE=$for64- \
+                CROSS_COMPILE_ARM32=$for32- \
                 AS=llvm-as \
                 NM=llvm-nm \
                 STRIP=llvm-strip \
@@ -264,8 +275,8 @@ CompileKernel(){
                 PATH=$clangDir/bin:$gcc64Dir/bin:$gcc32Dir/bin:/usr/bin:${PATH} \
                 LD_LIBRARY_PATH="$clangDir/lib64:${LD_LIBRARY_PATH}" \
                 CC=clang \
-                CROSS_COMPILE=aarch64-linux-gnu- \
-                CROSS_COMPILE_ARM32=arm-linux-gnueabi- \
+                CROSS_COMPILE=$for64- \
+                CROSS_COMPILE_ARM32=$for32- \
                 CLANG_TRIPLE=aarch64-linux-gnu-
         fi
     fi
